@@ -1,0 +1,43 @@
+/**
+ * Global Styles
+ * 
+ * This stylesheet contains the global styles applied across the application. 
+ * It ensures consistent typography, layout reset, and basic styling for common elements.
+ */
+
+/**
+ * Body Styling
+ * 
+ * - Ensures a consistent font family for all text elements.
+ * - Resets default browser margins and paddings to standardize layout.
+
+ */
+body {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: white;
+}
+
+/**
+ * Header and Footer Styling
+ * 
+ * - Provides padding for spacing within header and footer elements.
+ * - Applies a text color that complements the background.
+ */
+header,
+footer {
+	color: black;
+	padding: 1rem;
+}
+
+/**
+ * Link Styling
+ * 
+ * - Ensures links have a consistent appearance across the application.
+ * - Removes the default underline and sets a custom text color.
+ */
+a {
+	color: #e1dddd;
+	text-decoration: none;
+}
