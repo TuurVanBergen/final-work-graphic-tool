@@ -1,13 +1,15 @@
-import { useRef } from "react";
 import Canvas from "./components/Canvas";
+import { useFontLoader } from "./hooks/useFontLoader";
 
 export default function App() {
-	// voorbeeld: pas hier props aan of hou ref bij om redraw te triggeren
-	const canvasRef = useRef(null);
+	const { font, loading } = useFontLoader("/fonts/Helvetica/Helvetica.ttf");
+
+	if (loading) return <p>Font wordt geladen…</p>;
+
 	return (
-		<div style={{ textAlign: "center", marginTop: "2rem" }}>
-			<h1>Beeldlab Canvas</h1>
-			<Canvas ref={canvasRef} rotation={15} scaleX={1} scaleY={1} />
+		<div style={{ padding: "2rem" }}>
+			{/* Geef Canvas het geladen font en een test-letter */}
+			<Canvas font={font} selectedChar="A" />
 		</div>
 	);
 }
