@@ -1,0 +1,47 @@
+/* NavBar.css */
+
+/* 1. Font-face definitie voor Helvetica vanuit de public-map */
+@font-face {
+	font-family: "Helvetica";
+	src: url("/helvetica font/helvetica-light-587ebe5a59211.ttf")
+		format("truetype");
+	font-weight: light;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* 2. Pas Helvetica toe op de gehele navbar */
+nav {
+	font-family: "Helvetica", sans-serif;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 2rem 0 0 1rem;
+	background: #f8f9fa;
+	border: 1px solid #d62323;
+}
+
+/* 3. Link zonder onderstreping, standaard styling */
+nav a {
+	text-decoration: none;
+}
+
+/* 4. Logo/Home link styling */
+.home-link {
+	color: #d62323;
+	font-size: 40px;
+	margin-top: 20px;
+}
+
+/* 5. Algemene linkstijl */
+.nav-link {
+	color: #495057;
+	font-weight: 400;
+	margin-left: 1rem;
+}
+
+/* 6. Actieve link styling */
+.nav-link.active {
+	color: #007bff;
+	font-weight: 600;
+}

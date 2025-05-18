@@ -4,5 +4,4 @@
 - [x] Stap 2: Canvas component
 - [x] Stap 3: Transforms & redraw en Canvas zichtbaar in browser
 - [x] Stap 4: Canvas glyph rendering
-- [ ] Stap 5: GlyphEditor integratie  
-       ...
+- [x] Stap 5: Tool1 page met automatische glyph-cycling en Canvas
