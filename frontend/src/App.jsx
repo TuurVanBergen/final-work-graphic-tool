@@ -1,18 +1,13 @@
-/**
- * Entry point for the Final Work Graphic Design Tool
- */
+import { useRef } from "react";
+import Canvas from "./components/Canvas";
+
 export default function App() {
+	// voorbeeld: pas hier props aan of hou ref bij om redraw te triggeren
+	const canvasRef = useRef(null);
 	return (
-		<div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-			<header className="text-3xl font-semibold mb-6">
-				Final Work Graphic Design Tool
-			</header>
-			<main className="w-full max-w-4xl p-4">
-				<p className="text-center text-gray-600">
-					Welcome! This is the starting point for your graphic design editor.
-				</p>
-				{/* TODO: Add canvas, toolbar components, and routing here */}
-			</main>
+		<div style={{ textAlign: "center", marginTop: "2rem" }}>
+			<h1>Beeldlab Canvas</h1>
+			<Canvas ref={canvasRef} rotation={15} scaleX={1} scaleY={1} />
 		</div>
 	);
 }
