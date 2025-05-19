@@ -6,4 +6,4 @@
 - [x] Stap 4: Canvas glyph rendering
 - [x] Stap 5: Tool1 page met automatische glyph-cycling en Canvas
 - [x] Stap 6: Sliders & mapping logic
-- [ ] Stap 7: OutputPanel
+- [x] Stap 7: OutputPanel

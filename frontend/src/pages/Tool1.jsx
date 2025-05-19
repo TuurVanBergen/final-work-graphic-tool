@@ -3,6 +3,7 @@ import { useFontLoader } from "../hooks/useFontLoader.js";
 import Canvas from "../components/Canvas.jsx";
 import TransformSliderPanel from "../components/TransformSliderPanel";
 import { applySliderMappings } from "../utils/sliderLogic";
+import OutputPanel from "../components/OutputPanel";
 
 const ALPHABET =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,?.!".split(
@@ -54,16 +55,30 @@ export default function Tool1() {
 	const selectedChar = ALPHABET[currentIndex];
 
 	return (
-		<div style={{ padding: "2rem", textAlign: "center" }}>
-			<h2>Glyph Viewer</h2>
-			<Canvas
-				font={font}
-				selectedChar={selectedChar}
-				modifiedPathData={modifiedGlyph}
-			/>
-
-			<TransformSliderPanel values={sliderValues} onChange={setSliderValues} />
-			<button onClick={handleSave}>Opslaan</button>
+		<div style={{ padding: "2rem 0 0 0", textAlign: "center" }}>
+			{/* Side-by-side preview */}
+			<div style={{ display: "flex", gap: "2rem", marginLeft: "20px" }}>
+				<Canvas
+					font={font}
+					selectedChar={selectedChar}
+					modifiedPathData={modifiedGlyph}
+				/>
+				<OutputPanel
+					font={font}
+					selectedChar={selectedChar}
+					modifiedPathData={modifiedGlyph}
+				/>
+			</div>
+			{/* Sliders and save */}
+			<div style={{ marginTop: "1.5rem" }}>
+				<TransformSliderPanel
+					values={sliderValues}
+					onChange={setSliderValues}
+				/>
+				<button onClick={handleSave} style={{ marginLeft: "1rem" }}>
+					Opslaan
+				</button>
+			</div>
 		</div>
 	);
 }

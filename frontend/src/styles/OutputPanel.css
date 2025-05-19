@@ -1,0 +1,13 @@
+.output-panel {
+	width: 541px;
+	height: 675px;
+	border: 1px solid #d62323;
+	box-sizing: border-box;
+	overflow: hidden;
+	display: inline-block;
+}
+
+.output-panel > div {
+	width: 100%;
+	height: 100%;
+}

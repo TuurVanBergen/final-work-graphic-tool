@@ -12,3 +12,4 @@ Alle wijzigingen per versie/commit.
 - Tool1 page added met automatische glyph cycling and Canvas integratie.
 - TransformSliderPanel component toegevoegd
 - Slider logica in `src/utils/sliderLogic.js`
+- OutputPanel component toegevoegd voor de glyph preview zonder grid (voor print)
