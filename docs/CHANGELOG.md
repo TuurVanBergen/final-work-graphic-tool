@@ -10,3 +10,5 @@ Alle wijzigingen per versie/commit.
 - Canvas wordt nu in <App> gerenderd voor zichtbaarheid in browser
 - Canvas rendert nu glyph path gebaseerd op `font`, `selectedChar` and `modifiedPathData`
 - Tool1 page added met automatische glyph cycling and Canvas integratie.
+- TransformSliderPanel component toegevoegd
+- Slider logica in `src/utils/sliderLogic.js`

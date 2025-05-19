@@ -1,0 +1,92 @@
+/* TransformSliderPanel.css */
+
+.transform-panel {
+	border: 1px solid #d62323;
+	padding: 17px;
+	margin-left: 1rem;
+	width: 321px;
+	background: #fff;
+	font-family: "Helvetica", sans-serif;
+	font-weight: 300; /* Light */
+}
+
+.transform-panel h3 {
+	margin: 10px 0 28px 0; /* 10px vanaf border, 28px tot eerste slider */
+	color: #2807ff;
+	font-size: 22px;
+	font-weight: 300;
+	font-family: "Helvetica", sans-serif;
+}
+
+.slider-row {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 45px; /* afstand tussen slider lines /
+padding: 0 17px;     / 17px vanaf de rode border */
+}
+
+.slider-row:last-child {
+	margin-bottom: 31px; /* laatste slider tot aan border */
+}
+
+.slider-row label {
+	margin-bottom: 25px;
+	color: #2807ff;
+	font-size: 16px;
+	font-family: "Helvetica", sans-serif;
+}
+
+/* Range track */
+.slider-row input[type="range"] {
+	-webkit-appearance: none;
+	width: 100%;
+	background: none;
+}
+.slider-row input[type="range"]::-webkit-slider-runnable-track {
+	height: 1px;
+	background: #d62323;
+}
+.slider-row input[type="range"]::-moz-range-track {
+	height: 1px;
+	background: #d62323;
+}
+
+/* Thumb styling: vierkant wit met rode outline */
+.slider-row input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	width: 12px;
+	height: 12px;
+	background: #fff;
+	border: 1px solid #d62323;
+	border-radius: 0;
+	margin-top: -5px;
+	cursor: pointer;
+}
+.slider-row input[type="range"]::-moz-range-thumb {
+	width: 12px;
+	height: 12px;
+	background: #fff;
+	border: 1px solid #d62323;
+	border-radius: 0;
+	cursor: pointer;
+}
+
+/* Pseudo-elements voor 0 en 100 */
+.slider-row:before,
+.slider-row:after {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #2807ff;
+	font-size: 14px;
+	font-family: "Helvetica", sans-serif;
+}
+.slider-row:before {
+	content: "0";
+	left: 17px;
+}
+.slider-row:after {
+	content: "100";
+	right: 17px;
+}
