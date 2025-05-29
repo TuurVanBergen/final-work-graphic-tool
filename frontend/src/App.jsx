@@ -1,13 +1,22 @@
-import { useRef } from "react";
-import Canvas from "./components/Canvas";
+import NavBar from "./components/NavBar";
+import Home from "./pages/Home";
+import Tool1 from "./pages/Tool1";
+import Tool2 from "./pages/Tool2";
+import Gallerij from "./pages/Gallerij";
+import PosterEditor from "./pages/PosterEditor";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 export default function App() {
-	// voorbeeld: pas hier props aan of hou ref bij om redraw te triggeren
-	const canvasRef = useRef(null);
 	return (
-		<div style={{ textAlign: "center", marginTop: "2rem" }}>
-			<h1>Beeldlab Canvas</h1>
-			<Canvas ref={canvasRef} rotation={15} scaleX={1} scaleY={1} />
-		</div>
+		<Router>
+			<NavBar />
+			<Routes>
+				<Route path="/" element={<Home />} />{" "}
+				<Route path="/tool1" element={<Tool1 />} />
+				<Route path="/tool2" element={<Tool2 />} />
+				<Route path="/gallerij" element={<Gallerij />} />
+				<Route path="/poster" element={<PosterEditor />} />
+			</Routes>
+		</Router>
 	);
 }

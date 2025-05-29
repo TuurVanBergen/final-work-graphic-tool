@@ -1,0 +1,88 @@
+/* src/styles/Home.css */
+
+.home-container {
+	position: relative;
+	width: 100%;
+	height: 100vh;
+	overflow: hidden;
+	border-top: 1px solid #d62323;
+}
+
+.walker-canvas {
+	position: absolute;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 2;
+	pointer-events: none;
+}
+
+.grid-container {
+	position: relative;
+	z-index: 5;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	border-left: 1px solid #d62323;
+	border-right: 1px solid #d62323;
+	border-bottom: 1px solid #d62323;
+}
+
+.grid-item-link {
+	text-decoration: none;
+	color: inherit;
+	display: block;
+	width: 577px;
+	height: 1006px;
+	border-left: 1px solid #d62323;
+	border-right: 1px solid #d62323;
+}
+
+.grid-item-link:first-child {
+	border-left: none;
+}
+
+.grid-item-link:last-child {
+	border-right: none;
+}
+
+.grid-item {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+}
+
+.top-link {
+	margin-top: 85px;
+	width: 173px;
+	height: 24px;
+	color: #2807ff;
+	font-family: Helvetica, sans-serif;
+	font-size: 22px;
+	font-style: normal;
+	font-weight: 300;
+	line-height: normal;
+	text-transform: uppercase;
+	text-align: center;
+}
+
+.bottom-letter {
+	position: absolute;
+	left: 200px;
+	transform: translateX(-50%);
+	bottom: 40px; /* pas dit aan voor gewenste verticale afstand */
+	-webkit-text-stroke-width: 1px;
+	-webkit-text-stroke-color: #d62323;
+	font-family: Helvetica, sans-serif;
+	font-size: 250px;
+	font-style: normal;
+	font-weight: 300;
+	line-height: normal;
+	width: 252px;
+	height: 290px;
+	color: transparent;
+}
