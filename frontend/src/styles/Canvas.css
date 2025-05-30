@@ -1,6 +1,16 @@
 .canvas-wrapper {
-	width: 541px;
-	height: 675px;
-	border: 0.5px solid #d62323;
+	/* width: 541px;
+	height: 675px; */
+	width: 814;
+	height: 1021px;
+
+	/* wrapper heeft nu geen border meer */
+	margin-left: 20px;
+}
+
+/* Borderranden op de canvas zelf */
+.canvas-wrapper canvas {
+	border: 1px solid #d62323;
+	display: block; /* voorkomt inline spacing issues */
 	box-sizing: border-box;
 }

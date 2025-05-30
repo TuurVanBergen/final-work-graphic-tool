@@ -1,0 +1,63 @@
+.transformSliderPanel {
+	margin-left: 35.3%;
+	width: 100%;
+}
+.canvas {
+	margin-left: 20px;
+}
+.Tool1Wrapper {
+	width: 100%;
+	display: flex;
+	margin-top: 1.5rem;
+}
+.transformSliderPanel button {
+	border: 1px solid #d62323;
+	box-sizing: border-box;
+	width: 178.5px;
+	height: 35px;
+	margin-top: 155px;
+	background-color: white;
+	color: #d62323;
+	font-family: "Helvetica", sans-serif;
+	font-weight: 300; /* Light */
+}
+/* in Tool1.css of een apart bestand */
+.confirm-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+	/* deze regel is eigenlijk default: */
+	pointer-events: auto;
+	text-align: center;
+}
+
+.confirm-modal {
+	background: white;
+	padding: 2rem;
+	border: 1px solid #d62323;
+	z-index: 1001;
+}
+.confirm-modal p {
+	color: #d62323;
+}
+.confirm-buttons {
+	margin-top: 1rem;
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+}
+
+.confirm-buttons button {
+	padding: 0.5rem 1rem;
+	border: 1px solid #d62323;
+	background: white;
+	color: #d62323;
+	cursor: pointer;
+}
