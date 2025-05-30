@@ -1,5 +1,5 @@
 export function applyHalftone(p, points) {
-	if (p.halftoneCount <= 0) return [];
+	if (p.halftoneCount <= 0) return;
 
 	const cols = p.halftoneCount;
 	const rows = Math.ceil((p.height / p.width) * cols);
@@ -7,7 +7,7 @@ export function applyHalftone(p, points) {
 	const cellH = p.height / rows;
 	const sizeFactor = p.map(p.halftoneCount, 0, 100, 0.5, 3);
 
-	// Buffer met lettervorm
+	// Maak buffer met lettervorm
 	const pg = p.createGraphics(p.width, p.height);
 	pg.pixelDensity(1);
 	pg.push();
@@ -17,8 +17,9 @@ export function applyHalftone(p, points) {
 	pg.endShape(p.CLOSE);
 	pg.pop();
 
-	// Bouw een lijst met stippen
-	const dots = [];
+	// Teken halftone dots
+	p.push();
+	p.translate(-p.width / 2, -p.height / 2);
 	for (let j = 0; j < rows; j++) {
 		for (let i = 0; i < cols; i++) {
 			const cx = Math.floor(i * cellW + cellW / 2);
@@ -26,9 +27,12 @@ export function applyHalftone(p, points) {
 			const alpha = pg.get(cx, cy)[3] / 255;
 			if (alpha > 0) {
 				const r = Math.min(cellW, cellH) * sizeFactor * alpha;
-				dots.push({ x: cx, y: cy, r });
+				p.noStroke();
+				p.fill(p.shapeColor ?? "#2807FF");
+
+				p.ellipse(cx, cy, r, r);
 			}
 		}
 	}
-	return dots;
+	p.pop();
 }

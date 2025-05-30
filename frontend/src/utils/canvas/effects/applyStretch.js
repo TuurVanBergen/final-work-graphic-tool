@@ -1,14 +1,12 @@
 export function applyStretch(p, points) {
-	// Verdeelt de punten boven en onder het midden en schaalt ze anders
-	const midY = 0; // punten zijn al gecentreerd
-	const topScaleX = 1 + (p.proportion ?? 0) * 0.8;
-	const topScaleY = 1 - (p.proportion ?? 0) * 0.8;
-	const botScaleX = 1 + (p.bottomProportion ?? 0) * 0.8;
-	const botScaleY = 1 - (p.bottomProportion ?? 0) * 0.8;
+	const midY = p.bounds.y + p.bounds.h * 0.55 - (p.bounds.y + p.bounds.h / 2);
 
-	return points.map((pt) =>
-		pt.y < midY
-			? { x: pt.x * topScaleX, y: pt.y * topScaleY }
-			: { x: pt.x * botScaleX, y: pt.y * botScaleY }
+	const sxTop = 1 + p.proportion * 0.8;
+	const syTop = 1 - p.proportion * 0.8;
+	const sxBot = 1 + p.bottomProportion * 0.8;
+	const syBot = 1 - p.bottomProportion * 0.8;
+
+	return points.map(({ x, y }) =>
+		y < midY ? { x: x * sxTop, y: y * syTop } : { x: x * sxBot, y: y * syBot }
 	);
 }
