@@ -1,6 +1,8 @@
-import { applyStretch } from "./effects/applyStretch.js";
+import { applyStretch } from "./effects/applyStretch";
+import { applyJitter } from "./effects/applyJitter";
 
 export function applyEffects(p, pts) {
-	// Pas eerst stretch toe; verdere effecten volgen in latere stappen
-	return applyStretch(p, pts);
+	let transformed = applyStretch(p, pts);
+	transformed = applyJitter(p, transformed);
+	return transformed;
 }
