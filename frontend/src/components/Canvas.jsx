@@ -15,7 +15,7 @@ export default forwardRef(function Canvas(props, ref) {
 		redraw: () => p5Instance.current?.redraw(),
 	}));
 
-	// 1) Sync props naar p5-instance
+	// Sync props naar p5-instance
 	useEffect(() => {
 		const p = p5Instance.current;
 		if (!p) return;
@@ -27,9 +27,8 @@ export default forwardRef(function Canvas(props, ref) {
 		p.redraw();
 	}, [props.char, props.fontSize, ...SLIDER_KEYS.map((key) => props[key])]);
 
-	// 2) Init canvas, loadFont en Loading… state
+	// Init canvas met font loading en eerste drawing logic
 	useEffect(() => {
-		// Verwijder oude canvas indien nodig
 		if (containerRef.current) {
 			containerRef.current
 				.querySelectorAll("canvas")
@@ -39,8 +38,6 @@ export default forwardRef(function Canvas(props, ref) {
 
 		const instance = new p5((p) => {
 			let font;
-
-			// initialiseer props & state
 			p.char = props.char;
 			p.fontSize = props.fontSize;
 			SLIDER_KEYS.forEach((key) => (p[key] = props[key]));
@@ -51,13 +48,12 @@ export default forwardRef(function Canvas(props, ref) {
 			p.setup = () => {
 				p.createCanvas(CANVAS_W, CANVAS_H);
 				p.noLoop();
-				// Font laden
 				p.loadFont("/fonts/Roboto_Mono/static/RobotoMono-Regular.ttf", (f) => {
 					font = f;
 					p.textFont(font);
 					p.textSize(p.fontSize);
 					p.fontLoaded = true;
-					// initial compute
+					// compute points
 					p.bounds = font.textBounds(p.char, 0, 0, p.fontSize);
 					p.rawPts = font.textToPoints(p.char, 0, 0, p.fontSize);
 					p.redraw();
@@ -69,7 +65,6 @@ export default forwardRef(function Canvas(props, ref) {
 				p.push();
 				drawGrid(p, { width: p.width, height: p.height });
 				if (!p.fontLoaded) {
-					// Toon loading-indicator
 					p.fill(150);
 					p.textAlign(p.CENTER, p.CENTER);
 					p.textSize(16);
@@ -77,7 +72,27 @@ export default forwardRef(function Canvas(props, ref) {
 					p.pop();
 					return;
 				}
-				// Later: hier volgt de glyph-rendering
+				// fallback letter als er geen punten zijn
+				if (!Array.isArray(p.rawPts) || p.rawPts.length === 0) {
+					p.fill("#2807FF");
+					p.noStroke();
+					p.textAlign(p.CENTER, p.CENTER);
+					p.text(p.char, p.width / 2, p.height / 2);
+					p.pop();
+					return;
+				}
+				// center en teken de shape
+				const cx = p.bounds.x + p.bounds.w / 2;
+				const cy = p.bounds.y + p.bounds.h / 2;
+				const basePts = p.rawPts.map(({ x, y }) => ({
+					x: x - cx,
+					y: y - cy,
+				}));
+				p.fill("#2807FF");
+				p.translate(p.width / 2, p.height / 2);
+				p.beginShape();
+				basePts.forEach((pt) => p.vertex(pt.x, pt.y));
+				p.endShape(p.CLOSE);
 				p.pop();
 			};
 		}, containerRef.current);
