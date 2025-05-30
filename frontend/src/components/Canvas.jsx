@@ -1,5 +1,6 @@
 import { useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import p5 from "p5";
+import { drawGrid } from "../utils/canvas/drawHelpers";
 
 const CANVAS_W = 814;
 const CANVAS_H = 1021;
@@ -12,10 +13,7 @@ export default forwardRef(function Canvas(props, ref) {
 		redraw: () => p5Instance.current?.redraw(),
 	}));
 
-	// (props→p5 sync volgt in volgende stap)
-
 	useEffect(() => {
-		// Basis setup: maak canvas aan en geen loop
 		const sketch = (p) => {
 			p.setup = () => {
 				p.createCanvas(CANVAS_W, CANVAS_H).parent(containerRef.current);
@@ -23,7 +21,8 @@ export default forwardRef(function Canvas(props, ref) {
 			};
 			p.draw = () => {
 				p.background(255);
-				// grid & glyph-rendering voegen we later toe
+				drawGrid(p, { width: CANVAS_W, height: CANVAS_H });
+				// toekomstige glyph-rendering komt hier
 			};
 		};
 		p5Instance.current = new p5(sketch);
