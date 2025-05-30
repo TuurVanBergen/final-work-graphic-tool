@@ -6,5 +6,6 @@
 - [x] Stap 4: font loading en Loading… state
 - [x] Stap 5: text-to-points en eerste drawing logic
 - [x] Stap 6: filters toevoegen
+- [x] Stap 7: canvas koppelen aan applyEffects
 
       ...
