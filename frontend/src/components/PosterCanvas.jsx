@@ -6,14 +6,15 @@ import React, {
 } from "react";
 import p5 from "p5";
 import "../styles/PosterCanvas.css";
+import "../index.css";
 import { applyEffects } from "../utils/canvas/applyEffects";
 import { applyGrid } from "../utils/canvas/effects/applyGrid";
 import { applyHalftone } from "../utils/canvas/effects/applyHalftone";
 import { SLIDER_CONFIG } from "../config/SLIDER_CONFIG";
 
 const SLIDER_KEYS = SLIDER_CONFIG.map((s) => s.id);
-const CANVAS_W = 541;
-const CANVAS_H = 675;
+const CANVAS_W = 814;
+const CANVAS_H = 1021;
 
 export default forwardRef(function PosterCanvas(
 	{ char, originalSliders, design, fontSize },
@@ -169,5 +170,5 @@ export default forwardRef(function PosterCanvas(
 		return () => instance.remove();
 	}, []);
 
-	return <div className="canvas-wrapper" ref={containerRef} />;
+	return <div className="poster-canvas-wrapper" ref={containerRef} />;
 });

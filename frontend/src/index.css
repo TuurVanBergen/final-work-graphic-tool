@@ -1,43 +1,44 @@
-/**
- * Global Styles
- * 
- * This stylesheet contains the global styles applied across the application. 
- * It ensures consistent typography, layout reset, and basic styling for common elements.
- */
-
-/**
- * Body Styling
- * 
- * - Ensures a consistent font family for all text elements.
- * - Resets default browser margins and paddings to standardize layout.
-
- */
-body {
-	font-family: Arial, sans-serif;
+/* 0) Stel de pagina in op A4 zonder marges */
+@page {
+	size: A4;
 	margin: 0;
-	padding: 0;
-	background-color: white;
 }
 
-/**
- * Header and Footer Styling
- * 
- * - Provides padding for spacing within header and footer elements.
- * - Applies a text color that complements the background.
- */
-header,
-footer {
-	color: black;
-	padding: 1rem;
-}
+@media print {
+	/* 1) Zorg dat html/body bij print geen marges of padding hebben */
+	html,
+	body {
+		background-color: blue;
+		margin: 0;
+		padding: 0;
+	}
 
-/**
- * Link Styling
- * 
- * - Ensures links have a consistent appearance across the application.
- * - Removes the default underline and sets a custom text color.
- */
-a {
-	color: #e1dddd;
-	text-decoration: none;
+	/* 2) Verberg alle elementen behalve .poster-canvas */
+	body * {
+		visibility: hidden;
+	}
+	.poster-canvas,
+	.poster-canvas * {
+		visibility: visible;
+	}
+
+	/* 3) Positioneer .poster-canvas precies op volledige pagina, A4‐grootte */
+	.poster-canvas {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 210mm; /* A4‐breedte */
+		height: 297mm; /* A4‐hoogte */
+		margin: 0;
+		padding: 0;
+	}
+
+	/* 4) Scaleer het <canvas> in .poster-canvas naar heel A4 */
+	.poster-canvas canvas {
+		width: 210mm !important;
+		height: 297mm !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		border: none !important;
+	}
 }
