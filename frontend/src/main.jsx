@@ -6,8 +6,5 @@ import "./index.css";
 /**
  * Render de hoofdapplicatie.
  */
-ReactDOM.createRoot(document.getElementById("root")).render(
-	<React.StrictMode>
-		<App />
-	</React.StrictMode>
-);
+//Oplossing dubbele canvassen - Strict mode uitzetten.
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
