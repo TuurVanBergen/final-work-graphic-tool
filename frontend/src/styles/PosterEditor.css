@@ -1,0 +1,39 @@
+.PosterEditorWrapper {
+	display: flex;
+	padding-left: 15px; /* 15px ruimte tussen linkerkant en canvas */
+	gap: 20px; /* ruimte tussen canvas en panel */
+	margin-top: 1.5rem;
+}
+
+.poster-canvas .canvas-wrapper {
+	width: 541px;
+	height: 675px;
+}
+
+.poster-canvas .canvas-wrapper canvas {
+	border: 1px solid #d62323;
+	display: block;
+	box-sizing: border-box;
+}
+
+.poster-transformSliderPanel .buttons {
+	display: flex;
+	gap: 10px;
+	margin-top: 20px;
+}
+
+.poster-transformSliderPanel .buttons button {
+	border: 1px solid #d62323;
+	width: 178.5px;
+	height: 35px;
+	background-color: white;
+	color: #d62323;
+	font-family: "Helvetica", sans-serif;
+	font-weight: 300;
+	cursor: pointer;
+}
+
+/* Zorg dat het panel de juiste breedte behoudt */
+.poster-transformSliderPanel {
+	flex: 0 0 340px;
+}

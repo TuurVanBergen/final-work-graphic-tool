@@ -15,6 +15,9 @@ export default function NavBar() {
 	if (pathname == "/tool1") {
 		return null;
 	}
+	if (pathname == "/poster") {
+		return null;
+	}
 
 	const links = [{ to: "/", label: "Home" }];
 
