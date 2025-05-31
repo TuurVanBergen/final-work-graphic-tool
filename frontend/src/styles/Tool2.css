@@ -1,0 +1,214 @@
+#tool-layout {
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-start;
+	height: 100vh;
+	margin: 0;
+	padding-top: 42px;
+	padding-left: 88px;
+}
+
+#frame {
+	width: 722px;
+	height: 1020px;
+	border: 1px solid #d62323;
+	position: relative;
+}
+
+#inner-frame-top {
+	width: 318px;
+	height: 325px;
+	border: 1px solid #d62323;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#inner-frame-small-top {
+	width: 162px;
+	height: 161px;
+	border: 1px solid #d62323;
+	position: absolute;
+	top: 0;
+	left: 320px;
+}
+
+#inner-frame-small-bottom {
+	width: 162px;
+	height: 162px;
+	border: 1px solid #d62323;
+	position: absolute;
+	top: 162px;
+	left: 320px;
+}
+
+#inner-frame-small-lower-top {
+	width: 162px;
+	height: 163px;
+	border: 1px solid #d62323;
+	border-top: none;
+	position: absolute;
+	top: 325px;
+	left: 320px;
+}
+
+#inner-frame-small-lower-bottom {
+	width: 162px;
+	height: 162px;
+	border: 1px solid #d62323;
+	position: absolute;
+	top: 487px;
+	left: 320px;
+}
+
+#inner-frame-right-top {
+	height: 246px;
+	width: 238px;
+
+	border: 1px solid #d62323;
+	position: absolute;
+	top: 0;
+	left: 483px;
+}
+
+#inner-frame-right-bottom {
+	height: 246px;
+	width: 238px;
+
+	border: 1px solid #d62323;
+	position: absolute;
+	top: 0;
+	left: 483px;
+}
+
+#inner-frame-right-lower {
+	width: 238px;
+	height: 161px;
+	border: 1px solid #d62323;
+	position: absolute;
+	top: 488px; /* 252 + 233 = 485 */
+	left: 483px;
+}
+
+#inner-frame-large-right-bottom {
+	width: 401px;
+	height: 369px;
+	border: 1px solid #d62323;
+	position: absolute;
+	top: 650px; /* 485 + 159 = 644 */
+	left: 320px;
+}
+
+#inner-frame-middle {
+	width: 318px;
+	height: 376px;
+	border: 1px solid #d62323;
+	position: absolute;
+	top: 325px;
+	left: 0;
+}
+
+#inner-frame-bottom {
+	width: 318px;
+	height: 318px;
+	border: 1px solid;
+	position: absolute;
+	top: 701px;
+	left: 0;
+	border: 1px solid #d62323;
+}
+.sidebar {
+	margin-left: 1rem;
+}
+
+.button-panel {
+	display: flex;
+	justify-content: space-between;
+	width: 321px;
+	margin-top: 10px;
+}
+
+.button-panel button {
+	padding: 6px 12px;
+	border: 1px solid #d62323;
+	background: #fff;
+	color: #d62323;
+	font-family: "Helvetica", sans-serif;
+	font-weight: 300;
+	cursor: pointer;
+}
+
+.button-panel button:hover {
+	background: #d62323;
+	color: #fff;
+}
+#inner-frame-top {
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 318px;
+	height: 325px;
+	border: 1px solid #d62323;
+}
+
+.frame-image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* Buttons en modal styling */
+.button-panel button {
+	padding: 6px 12px;
+	border: 1px solid #d62323;
+	background: #fff;
+	color: #d62323;
+	font-family: "Helvetica", sans-serif;
+	font-weight: 300;
+	cursor: pointer;
+}
+.button-panel button:hover {
+	background: #d62323;
+	color: #fff;
+}
+
+.confirm-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+.confirm-modal {
+	background: white;
+	padding: 2rem;
+	border: 1px solid #d62323;
+	text-align: center;
+	z-index: 1001;
+}
+.confirm-modal p {
+	color: #d62323;
+}
+.confirm-buttons {
+	margin-top: 1rem;
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+}
+.confirm-buttons button {
+	padding: 0.5rem 1rem;
+	border: 1px solid #d62323;
+	background: white;
+	color: #d62323;
+	cursor: pointer;
+}
+.confirm-buttons button:hover {
+	background: #d62323;
+	color: #fff;
+}
