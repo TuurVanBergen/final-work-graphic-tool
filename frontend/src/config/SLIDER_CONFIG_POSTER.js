@@ -1,6 +1,6 @@
 export const SLIDER_CONFIG_POSTER = [
 	{
-		id: "scale",
+		id: "posterScale",
 		label: "Schaal",
 		min: 0.1,
 		max: 3,
