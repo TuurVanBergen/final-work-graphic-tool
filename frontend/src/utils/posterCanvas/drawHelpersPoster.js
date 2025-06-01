@@ -1,8 +1,7 @@
-// src/utils/canvas/drawHelpersPoster.js
-
 import { applyGrid } from "../canvas/effects/applyGrid";
 import { applyHalftone } from "../canvas/effects/applyHalftone";
 import { applyBlendMode } from "../posterCanvas/effects/applyBlendMode";
+
 /**
  * Teken de “basis” van de letter in het poster-canvas:
  * - Óf grid+halftone
@@ -10,16 +9,16 @@ import { applyBlendMode } from "../posterCanvas/effects/applyBlendMode";
  * - Óf alleen grid
  * - Óf standaard lettercontour (outline of fill)
  *
- * Hierbij passen we ook de blendMode toe op basis van design.blend.
+ * Hierbij passen we ook de blendMode toe op basis van blendVal.
  *
  * @param {object} p         p5 instance
  * @param {Array<{x:number,y:number}>} finalPts  punten van de contour (geapplyde Effects)
  * @param {string} fillColor kleurcode voor vulling / stroke
  * @param {number} outlineW  lijngewicht (0 = geen outline → dan fill)
- * @param {number} blendVal  waarde van de blend-slider (0..100)
+ * @param {number} blendVal  waarde van de blend-slider (0..10)
  */
 export function drawPosterBase(p, finalPts, fillColor, outlineW, blendVal) {
-	// 0) Pas blend mode toe
+	// 0) Zet blend mode op basis van slider
 	applyBlendMode(p, blendVal);
 
 	// 1) grid & halftone flags:
@@ -50,7 +49,4 @@ export function drawPosterBase(p, finalPts, fillColor, outlineW, blendVal) {
 		finalPts.forEach((pt) => p.vertex(pt.x, pt.y));
 		p.endShape(p.CLOSE);
 	}
-
-	// 3) Zet blendMode terug naar standaard, zodat latere lagen “normaal” tekenen
-	p.blendMode(p.BLEND);
 }

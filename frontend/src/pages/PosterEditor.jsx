@@ -1,5 +1,3 @@
-// src/pages/PosterEditor.jsx
-
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PosterCanvas from "../components/PosterCanvas";
@@ -17,10 +15,9 @@ export default function PosterEditor() {
 		scale: 1,
 		fillHue: 0,
 		bgHue: 0,
-		texture: 0,
-		inkBleed: 5,
+		verticalOffset: 0,
+		horizontalOffset: 0,
 		blend: 0,
-		// zet je oude properties (eventueel keep je rotation/outlineWidth als je ze nog wil)
 		rotation: 0,
 		outlineWidth: 0,
 	});
@@ -32,10 +29,9 @@ export default function PosterEditor() {
 		scale: 1,
 		fillHue: 0,
 		bgHue: 0,
-		texture: 0,
-		inkBleed: 5,
+		verticalOffset: 0,
+		horizontalOffset: 0,
 		blend: 0,
-		// als je rotation/outlineWidth nog gebruikt: zet die hier ook
 		rotation: 0,
 		outlineWidth: 0,
 	});
@@ -66,8 +62,8 @@ export default function PosterEditor() {
 			init.scale !== design.scale ||
 			init.fillHue !== design.fillHue ||
 			init.bgHue !== design.bgHue ||
-			init.texture !== design.texture ||
-			init.inkBleed !== design.inkBleed ||
+			init.verticalOffset !== design.verticalOffset ||
+			init.horizontalOffset !== design.horizontalOffset ||
 			init.blend !== design.blend
 		);
 	};

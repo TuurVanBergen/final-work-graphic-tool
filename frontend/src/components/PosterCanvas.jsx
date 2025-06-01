@@ -10,10 +10,9 @@ import "../index.css";
 
 import { applyEffects } from "../utils/canvas/applyEffects";
 import { drawPosterBase } from "../utils/posterCanvas/drawHelpersPoster";
-import { applyInkBleed } from "../utils/posterCanvas/effects/applyInkBleed";
 
-import { SLIDER_CONFIG } from "../config/SLIDER_CONFIG"; // Tool1-sliders (grid, halftone, etc.)
-import { SLIDER_CONFIG_POSTER } from "../config/SLIDER_CONFIG_POSTER"; // Poster-sliders (scale, fillHue, bgHue, texture, inkBleed, blend)
+import { SLIDER_CONFIG } from "../config/SLIDER_CONFIG"; // Tool1‐sliders
+import { SLIDER_CONFIG_POSTER } from "../config/SLIDER_CONFIG_POSTER"; // Poster‐sliders
 
 const TOOL1_KEYS = SLIDER_CONFIG.map((s) => s.id);
 const CANVAS_W = 814;
@@ -26,34 +25,23 @@ export default forwardRef(function PosterCanvas(
 	const containerRef = useRef(null);
 	const p5Instance = useRef(null);
 
-	// Exposeer een 'redraw' methode zodat parent (PosterEditor) p5 kan hertekenen
 	useImperativeHandle(ref, () => ({
 		redraw: () => p5Instance.current?.redraw(),
 	}));
 
-	// Sync props in p5-instance
+	// Sync props met p5‐instance
 	useEffect(() => {
 		const p = p5Instance.current;
 		if (!p) return;
-
-		// Zet letter en fontSize
 		p.char = char;
 		p.fontSize = fontSize;
-
-		// Kopieer ALLE Tool1-sliders (gridSize, halftoneCount, etc.)
-		TOOL1_KEYS.forEach((key) => {
-			p[key] = originalSliders[key];
-		});
-
-		// Poster-specifieke instellingen
-		p.design = design; // bevat posterScale, fillHue, bgHue, texture, inkBleed, blend
+		TOOL1_KEYS.forEach((key) => (p[key] = originalSliders[key]));
+		p.design = design;
 		p.redraw();
 	}, [char, fontSize, originalSliders, design]);
 
-	// Initialiseer p5
 	useEffect(() => {
 		if (containerRef.current) {
-			// Verwijder oude canvas-elementen (bij HMR / router-switch)
 			containerRef.current
 				.querySelectorAll("canvas")
 				.forEach((c) => c.remove());
@@ -63,7 +51,6 @@ export default forwardRef(function PosterCanvas(
 		const instance = new p5((p) => {
 			let font;
 
-			// Achtergrond‐ en voorgrond‐palettes
 			const bgPalette = [
 				"#ffffff",
 				"#ffcccc",
@@ -89,7 +76,6 @@ export default forwardRef(function PosterCanvas(
 				"#FF851B",
 			];
 
-			// Init props in p5
 			p.char = char;
 			p.fontSize = fontSize;
 			p.design = design;
@@ -111,27 +97,30 @@ export default forwardRef(function PosterCanvas(
 			p.draw = () => {
 				if (!p.fontLoaded) return;
 
-				// 1) Achtergrond (bgHue)
+				// 1) Achtergrond
 				const bgIdx = Math.min(
 					Math.max(Math.floor(p.design.bgHue), 0),
 					bgPalette.length - 1
 				);
 				p.background(bgPalette[bgIdx]);
 
+				// === START EEN ENKELE PUSH/POP-SPAN ===
 				p.push();
 
-				// 2) Poster-transformaties (positionX, positionY, rotation, posterScale)
-				p.translate(
-					p.width / 2 + p.design.positionX,
-					p.height / 2 + p.design.positionY
-				);
+				// 2) Externe transformaties: posX/posY + slider‐offsets
+				const totalX =
+					p.width / 2 + p.design.positionX + p.design.horizontalOffset; // horizontale offset
+				const totalY =
+					p.height / 2 + p.design.positionY + p.design.verticalOffset; // verticale offset
+				p.translate(totalX, totalY);
+
 				p.rotate((p.design.rotation * Math.PI) / 180);
 				p.scale(p.design.posterScale);
 
-				// 3) Tool1-transformaties (stretch/slant/…)
+				// 3) Tool1‐transformaties (stretch/slant e.d.)
 				p.scale(p.scaleX || 1, 1);
 
-				// 4) Letter naar punten omzetten
+				// 4) Bereken contourpunten en pas applyEffects toe
 				const bounds = font.textBounds(p.char, 0, 0, p.fontSize);
 				const rawPts = font.textToPoints(p.char, 0, 0, p.fontSize);
 				const cx = bounds.x + bounds.w / 2;
@@ -140,40 +129,50 @@ export default forwardRef(function PosterCanvas(
 					x: pt.x - cx,
 					y: pt.y - cy,
 				}));
-
-				// 5) Pas “applyEffects” toe (jitter, stretch, enz.)
 				const finalPts = applyEffects(p, basePts);
 
-				// 6) Kies voorgrondkleur (fillHue)
+				// 5) Kies voorgrondkleur & outline‐dikte
 				const fillIdx = Math.min(
 					Math.max(Math.floor(p.design.fillHue), 0),
 					fillPalette.length - 1
 				);
 				const fillColor = fillPalette[fillIdx];
-
-				// 7) Outline‐dikte
 				const outlineW = p.design.outlineWidth;
 
-				// 8) Teken basisvorm mét blendMode
+				// 6) Teken de basis (grid/halftone/contour/fill) WÉL met blend-mode
 				drawPosterBase(
 					p,
 					finalPts,
 					fillColor,
 					outlineW,
-					p.design.blend // slider-waarde voor blend (0..100)
+					p.design.blend // 0..10, straks gemapt naar de juiste p5-blendMode
 				);
 
-				// 9) Ink-Bleed over dezelfde contour
-				applyInkBleed(
-					p,
-					finalPts,
-					fillColor,
-					p.design.inkBleed, // slider-waarde (0..20)
-					font,
-					p.fontSize
-				);
+				// 7) Als er géén grid/halftone actief is, teken “gewone” fill of outline:
+				const doGrid = p.gridSize > 10;
+				const doHalftone = p.halftoneCount > 0;
+				if (!doGrid && !doHalftone) {
+					if (outlineW > 0) {
+						p.noFill();
+						p.stroke(fillColor);
+						p.strokeWeight(outlineW);
+						p.beginShape();
+						finalPts.forEach((pt) => p.vertex(pt.x, pt.y));
+						p.endShape(p.CLOSE);
+					} else {
+						p.fill(fillColor);
+						p.noStroke();
+						p.beginShape();
+						finalPts.forEach((pt) => p.vertex(pt.x, pt.y));
+						p.endShape(p.CLOSE);
+					}
+				}
 
+				// 8) Sluit de PUSH af
 				p.pop();
+
+				// 9) **Reset blendMode pas hier (buiten push/pop) naar BLEND**
+				p.blendMode(p.BLEND);
 			};
 		}, containerRef.current);
 
