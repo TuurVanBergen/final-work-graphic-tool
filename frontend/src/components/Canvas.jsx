@@ -92,7 +92,6 @@ export default forwardRef(function Canvas(props, ref) {
 					p.pop();
 					return;
 				}
-				// Geen dubbele herberekening hier! p.rawPts is al correct
 				if (!Array.isArray(p.rawPts) || p.rawPts.length === 0) {
 					p.fill("#2807FF");
 					p.noStroke();
@@ -110,21 +109,27 @@ export default forwardRef(function Canvas(props, ref) {
 					y: pt.y - cy,
 				}));
 
-				//Translate pas NA correct gecentreerd
+				// Translate pas NA correct gecentreerd
 				p.translate(p.width / 2, p.height / 2);
 				p.scale(p.scaleX ?? 1, 1);
 
 				// Pas effecten toe
 				const finalPts = applyEffects(p, basePts);
 
-				// Teken vorm
-				p.fill("#2807FF");
-				p.noStroke();
-				if (p.gridSize > 10) {
-					applyGrid(p, finalPts);
-				} else if (p.halftoneCount > 0) {
+				// --- Halftone en grid combineren
+				const doGrid = p.gridSize > 10;
+				const doHalftone = p.halftoneCount > 0;
+
+				if (doGrid && doHalftone) {
 					applyHalftone(p, finalPts);
+					applyGrid(p, finalPts);
+				} else if (doHalftone) {
+					applyHalftone(p, finalPts);
+				} else if (doGrid) {
+					applyGrid(p, finalPts);
 				} else {
+					p.fill("#2807FF");
+					p.noStroke();
 					p.beginShape();
 					finalPts.forEach((pt) => p.vertex(pt.x, pt.y));
 					p.endShape(p.CLOSE);
