@@ -56,7 +56,7 @@ export default function Tool1() {
 			state: {
 				char: ALPHABET[currentIndex],
 				sliders: sliders,
-				fontSize: 550,
+				fontSize: 650,
 			},
 		});
 	};

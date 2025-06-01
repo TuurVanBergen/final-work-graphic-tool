@@ -98,6 +98,7 @@ export default forwardRef(function PosterCanvas(
 
 			p.draw = () => {
 				if (!p.fontLoaded) return;
+
 				// background
 				const bgIdx = Math.min(
 					Math.max(Math.floor(p.design.bgHue), 0),
@@ -113,6 +114,7 @@ export default forwardRef(function PosterCanvas(
 				);
 				p.rotate((p.design.rotation * Math.PI) / 180);
 				p.scale(p.design.scale);
+
 				// tool1 transforms
 				p.scale(p.scaleX || 1, 1);
 
@@ -130,25 +132,26 @@ export default forwardRef(function PosterCanvas(
 					fillPalette.length - 1
 				);
 				const fillColor = fillPalette[fillIdx];
+
 				// outline
 				const outlineW = p.design.outlineWidth;
 
-				if (p.gridSize > 10) {
-					// pixelize
-					applyGrid(p, finalPts).forEach((cell) => {
-						p.noStroke();
-						p.fill(fillColor);
-						p.rect(cell.x, cell.y, cell.w, cell.h);
-					});
-				} else if (p.halftoneCount > 0) {
-					// halftone
-					applyHalftone(p, finalPts).forEach((dot) => {
-						p.noStroke();
-						p.fill(fillColor);
-						p.ellipse(dot.x, dot.y, dot.r, dot.r);
-					});
+				p.shapeColor = fillColor;
+
+				const doGrid = p.gridSize > 10;
+				const doHalftone = p.halftoneCount > 0;
+
+				if (doGrid && doHalftone) {
+					// 1) Halftone
+					applyHalftone(p, finalPts);
+					// 2) Grid-overlay
+					applyGrid(p, finalPts);
+					// draw utils
+				} else if (doHalftone) {
+					applyHalftone(p, finalPts);
+				} else if (doGrid) {
+					applyGrid(p, finalPts);
 				} else {
-					// standaard vorm
 					if (outlineW > 0) {
 						p.noFill();
 						p.stroke(fillColor);
