@@ -15,14 +15,30 @@ export default function PosterEditor() {
 		positionX: 0,
 		positionY: 0,
 		scale: 1,
-		rotation: 0,
 		fillHue: 0,
+		bgHue: 0,
+		texture: 0,
 		inkBleed: 5,
+		blend: 0,
+		// zet je oude properties (eventueel keep je rotation/outlineWidth als je ze nog wil)
+		rotation: 0,
 		outlineWidth: 0,
 	});
 
 	//ontwerpwaarden onthouden
-	const initialDesignRef = useRef(design);
+	const initialDesignRef = useRef({
+		positionX: 0,
+		positionY: 0,
+		scale: 1,
+		fillHue: 0,
+		bgHue: 0,
+		texture: 0,
+		inkBleed: 5,
+		blend: 0,
+		// als je rotation/outlineWidth nog gebruikt: zet die hier ook
+		rotation: 0,
+		outlineWidth: 0,
+	});
 
 	// Modal‐states
 	const [showBackConfirm, setShowBackConfirm] = useState(false);
@@ -48,10 +64,11 @@ export default function PosterEditor() {
 			init.positionX !== design.positionX ||
 			init.positionY !== design.positionY ||
 			init.scale !== design.scale ||
-			init.rotation !== design.rotation ||
 			init.fillHue !== design.fillHue ||
+			init.bgHue !== design.bgHue ||
+			init.texture !== design.texture ||
 			init.inkBleed !== design.inkBleed ||
-			init.outlineWidth !== design.outlineWidth
+			init.blend !== design.blend
 		);
 	};
 
