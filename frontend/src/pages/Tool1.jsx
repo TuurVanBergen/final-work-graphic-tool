@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import Canvas from "../components/Canvas.jsx";
 import TransformSliderPanel from "../components/TransformSliderPanel";
 import { SLIDER_CONFIG } from "../config/SLIDER_CONFIG";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/Tool1.css";
 
 const ALPHABET = [
@@ -20,8 +20,21 @@ const DEFAULT_SLIDERS = Object.fromEntries(
 );
 
 export default function Tool1() {
-	const [currentIndex, setCurrentIndex] = useState(0);
-	const [sliders, setSliders] = useState(DEFAULT_SLIDERS);
+	const location = useLocation();
+	const navigate = useNavigate();
+
+	const slidersFromState = location.state?.sliders;
+	const charFromState = location.state?.char;
+
+	const [sliders, setSliders] = useState(
+		slidersFromState ? slidersFromState : DEFAULT_SLIDERS
+	);
+
+	const initialIndex = charFromState ? ALPHABET.indexOf(charFromState) : 0;
+	const [currentIndex, setCurrentIndex] = useState(
+		initialIndex >= 0 ? initialIndex : 0
+	);
+
 	const canvasRef = useRef(null);
 
 	// om te weten wat de initiale waren:
@@ -35,8 +48,6 @@ export default function Tool1() {
 		const init = initialSlidersRef.current;
 		return Object.keys(init).some((k) => init[k] !== sliders[k]);
 	};
-
-	const navigate = useNavigate();
 
 	// nieuwe handleBack
 	const handleBack = () => {
