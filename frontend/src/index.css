@@ -5,15 +5,13 @@
 }
 
 @media print {
-	/* 1) Zorg dat html/body bij print geen marges of padding hebben */
 	html,
 	body {
-		background-color: blue;
 		margin: 0;
 		padding: 0;
 	}
 
-	/* 2) Verberg alle elementen behalve .poster-canvas */
+	/* 2) Verberg alles behalve .poster-canvas */
 	body * {
 		visibility: hidden;
 	}
@@ -22,18 +20,20 @@
 		visibility: visible;
 	}
 
-	/* 3) Positioneer .poster-canvas precies op volledige pagina, A4‐grootte */
+	/* 3) Positioneer .poster-canvas precies over de hele A4 pagina */
 	.poster-canvas {
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 210mm; /* A4‐breedte */
-		height: 297mm; /* A4‐hoogte */
+		width: 210mm; /* A4 breedte */
+		height: 297mm; /* A4 hoogte */
 		margin: 0;
 		padding: 0;
+		page-break-before: avoid;
+		page-break-after: avoid;
 	}
 
-	/* 4) Scaleer het <canvas> in .poster-canvas naar heel A4 */
+	/* 4) Scaleer de <canvas> in .poster-canvas naar exact de A4 grootte */
 	.poster-canvas canvas {
 		width: 210mm !important;
 		height: 297mm !important;
