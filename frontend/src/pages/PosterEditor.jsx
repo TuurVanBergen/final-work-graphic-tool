@@ -4,6 +4,15 @@ import PosterCanvas from "../components/PosterCanvas";
 import DesignSliderPanel from "../components/DesignSliderPanel";
 import "../styles/PosterEditor.css";
 
+const ALPHABET = [
+	...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
+	...Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i)),
+	...Array.from({ length: 10 }, (_, i) => String(i)),
+	",",
+	"?",
+	".",
+	"!",
+];
 export default function PosterEditor() {
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -130,7 +139,10 @@ export default function PosterEditor() {
 			setCountdown((prev) => {
 				if (prev <= 1) {
 					clearInterval(intervalId);
-					navigate("/");
+					const idx = ALPHABET.indexOf(char);
+					const nextIdx = idx >= 0 ? (idx + 1) % ALPHABET.length : 0;
+					const nextChar = ALPHABET[nextIdx];
+					navigate("/", { state: { char: nextChar } });
 					return 0;
 				}
 				return prev - 1;

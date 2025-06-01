@@ -23,16 +23,18 @@ export default function Tool1() {
 	const location = useLocation();
 	const navigate = useNavigate();
 
+	const incomingChar = location.state?.char;
+
+	const initialIndex = incomingChar ? ALPHABET.indexOf(incomingChar) : 0;
+	const startIndex = initialIndex >= 0 ? initialIndex : 0;
+
+	const [currentIndex, setCurrentIndex] = useState(startIndex);
+
 	const slidersFromState = location.state?.sliders;
 	const charFromState = location.state?.char;
 
 	const [sliders, setSliders] = useState(
 		slidersFromState ? slidersFromState : DEFAULT_SLIDERS
-	);
-
-	const initialIndex = charFromState ? ALPHABET.indexOf(charFromState) : 0;
-	const [currentIndex, setCurrentIndex] = useState(
-		initialIndex >= 0 ? initialIndex : 0
 	);
 
 	const canvasRef = useRef(null);
