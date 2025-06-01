@@ -1,13 +1,14 @@
-// electron-main.js
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// __dirname berekenen in ES-module modus:
+import { initSerialPort } from "./serial-handler.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
+let serialPortHandle;
 
 function createWindow() {
 	mainWindow = new BrowserWindow({
@@ -29,8 +30,21 @@ function createWindow() {
 		mainWindow.loadFile(indexHtml);
 	}
 
-	// Optioneel: IPC voor “silent print” (laat Electron direct naar de printer gaan)
+	// Open de seriële poort
+	try {
+		serialPortHandle = initSerialPort(
+			mainWindow,
+			"/dev/cu.usbmodem11101", // <-- vervang dit door het pad dat je in macOS ziet
+			9600
+		);
+		console.log("SerialPort geopend op /dev/cu.usbmodem11101 @9600");
+	} catch (err) {
+		console.error("Kon SerialPort niet openen:", err);
+	}
+
+	// Print‐silent
 	ipcMain.on("print-silent", () => {
+		console.log(" print-silent IPC ontvangen in main");
 		mainWindow.webContents.print(
 			{ silent: true, printBackground: true },
 			(success, failureReason) => {
@@ -40,6 +54,10 @@ function createWindow() {
 	});
 
 	mainWindow.on("closed", () => {
+		// Sluit seriële poort  af
+		if (serialPortHandle && typeof serialPortHandle.close === "function") {
+			serialPortHandle.close();
+		}
 		mainWindow = null;
 		app.quit();
 	});

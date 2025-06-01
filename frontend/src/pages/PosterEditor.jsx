@@ -1,68 +1,5 @@
-// import { useState, useEffect, useRef } from "react";
-// import { useLocation, useNavigate } from "react-router-dom";
-// import PosterCanvas from "../components/PosterCanvas";
-// import DesignSliderPanel from "../components/DesignSliderPanel";
-// import "../styles/PosterEditor.css";
-
-// export default function PosterEditor() {
-// 	const location = useLocation();
-// 	const navigate = useNavigate();
-// 	// Haal char, sliders en fontSize uit de state van Tool1
-// 	const { char, sliders: originalSliders, fontSize } = location.state || {};
-
-// 	// Design staat voor position/scale/rotation/sliders voor poster
-// 	const [design, setDesign] = useState({
-// 		positionX: 0,
-// 		positionY: 0,
-// 		scale: 1,
-// 		rotation: 0,
-// 		fillHue: 0,
-// 		inkBleed: 5,
-// 		outlineWidth: 0,
-// 	});
-
-// 	const canvasRef = useRef(null);
-
-// 	// Als er geen data is, terug naar Tool1
-// 	useEffect(() => {
-// 		if (!char || !originalSliders) {
-// 			navigate("/tool1");
-// 		}
-// 	}, [char, originalSliders, navigate]);
-
-// 	const handleBack = () => {
-// 		navigate("/tool1", { state: { char, sliders: originalSliders, fontSize } });
-// 	};
-
-// 	const handleDownload = () => {
-// 		alert("Downloaden als PDF wordt later geïmplementeerd.");
-// 	};
-
-// 	return (
-// 		<div className="PosterEditorWrapper">
-// 			{/* Links: PosterCanvas */}
-// 			<div className="poster-canvas">
-// 				<PosterCanvas
-// 					ref={canvasRef}
-// 					char={char}
-// 					originalSliders={originalSliders}
-// 					design={design}
-// 					fontSize={fontSize}
-// 				/>
-// 			</div>
-
-// 			{/* Rechts: DesignSliderPanel + knoppen */}
-// 			<div className="poster-transformSliderPanel">
-// 				<DesignSliderPanel values={design} onChange={setDesign} />
-// 				<div className="buttons">
-// 					<button onClick={handleBack}>A. TERUG</button>
-// 					<button onClick={handleDownload}>B. DOWNLOAD</button>
-// 				</div>
-// 			</div>
-// 		</div>
-// 	);
-// }
 // src/pages/PosterEditor.jsx
+
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PosterCanvas from "../components/PosterCanvas";
@@ -74,7 +11,6 @@ export default function PosterEditor() {
 	const navigate = useNavigate();
 	const { char, sliders: originalSliders, fontSize } = location.state || {};
 
-	// Huidige ontwerpwaarden (positie, schaal, rotatie, etc.)
 	const [design, setDesign] = useState({
 		positionX: 0,
 		positionY: 0,
@@ -85,15 +21,15 @@ export default function PosterEditor() {
 		outlineWidth: 0,
 	});
 
-	// Ref om de “opgeslagen” ontwerpwaarden te onthouden
+	//ontwerpwaarden onthouden
 	const initialDesignRef = useRef(design);
 
-	// Modal-states
+	// Modal‐states
 	const [showBackConfirm, setShowBackConfirm] = useState(false);
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 	const [showCountdown, setShowCountdown] = useState(false);
 
-	// Countdown-teller (start op 5, aftellen naar 1)
+	// Countdown‐teller
 	const [countdown, setCountdown] = useState(5);
 
 	const canvasRef = useRef(null);
@@ -122,10 +58,8 @@ export default function PosterEditor() {
 	// === HANDLE BACK ===
 	const handleBack = () => {
 		if (isDirty()) {
-			// Als er wijzigingen zijn, toon de modal
 			setShowBackConfirm(true);
 		} else {
-			// Geen wijzigingen: direct terug navigeren
 			navigate("/tool1", {
 				state: { char, sliders: originalSliders, fontSize },
 			});
@@ -133,30 +67,33 @@ export default function PosterEditor() {
 	};
 
 	const handleBackYes = () => {
-		// Gebruiker bevestigt teruggaan (zonder opslaan)
 		setShowBackConfirm(false);
 		navigate("/tool1", { state: { char, sliders: originalSliders, fontSize } });
 	};
 
 	const handleBackNo = () => {
-		// Gebruiker wil niet terug, sluit modal
 		setShowBackConfirm(false);
 	};
 
 	// === HANDLE SAVE ===
 	const handleSaveClick = () => {
-		// Sla de huidige ontwerpwaarden altijd op
 		initialDesignRef.current = { ...design };
-		// Toon de modal: “Wil je afdrukken?”
 		setShowSaveConfirm(true);
 	};
 
 	const handleSaveYes = () => {
-		// Gebruiker wil printen: eerst opslaan, dan printen
 		initialDesignRef.current = { ...design };
-		window.print();
+
+		console.log("renderer: window.electronAPI = ", window.electronAPI);
+
+		if (window.electronAPI && window.electronAPI.printSilent) {
+			window.electronAPI.printSilent();
+		} else {
+			console.error("electronAPI niet gevonden! Silent print faalt.");
+		}
+
 		setShowSaveConfirm(false);
-		// Start de countdown-modal na een kleine vertraging (zodat printdialog opstart)
+
 		setTimeout(() => {
 			setShowCountdown(true);
 			setCountdown(5);
@@ -164,26 +101,22 @@ export default function PosterEditor() {
 	};
 
 	const handleSaveNo = () => {
-		// Gebruiker wil niet printen: alleen opslaan
 		initialDesignRef.current = { ...design };
 		setShowSaveConfirm(false);
 		alert("Ontwerp is opgeslagen (zonder afdrukken).");
-		// Start de countdown-modal onmiddellijk (zonder print)
+
 		setShowCountdown(true);
 		setCountdown(5);
 	};
 
 	// === Countdown useEffect ===
-	// Zodra showCountdown true wordt, beginnen we elke seconde de teller af te laten lopen.
 	useEffect(() => {
 		if (!showCountdown) return;
 
-		// Start interval om elke 1 seconde countdown omlaag te doen
 		const intervalId = setInterval(() => {
 			setCountdown((prev) => {
 				if (prev <= 1) {
 					clearInterval(intervalId);
-					// Na afronding van de countdown, ga naar "/"
 					navigate("/");
 					return 0;
 				}
@@ -191,10 +124,19 @@ export default function PosterEditor() {
 			});
 		}, 1000);
 
-		// Cleanup: als de component onmount of showCountdown=false, clear interval
 		return () => clearInterval(intervalId);
 	}, [showCountdown, navigate]);
-
+	// useEffect voor inkomende Arduino-data
+	useEffect(() => {
+		if (window.electronAPI && window.electronAPI.onArduinoData) {
+			window.electronAPI.onArduinoData((line) => {
+				// Log de volledige ontvangen string in de console
+				console.log(" Ontvangen van Arduino:", line);
+			});
+		} else {
+			console.warn("electronAPI.onArduinoData is niet beschikbaar");
+		}
+	}, []);
 	return (
 		<div className="PosterEditorWrapper">
 			{/* === Links: PosterCanvas === */}
@@ -207,8 +149,7 @@ export default function PosterEditor() {
 					fontSize={fontSize}
 				/>
 			</div>
-
-			{/* === Rechts: sliders en knoppen === */}
+			{/* === Rechts: sliders en knoppen === */}{" "}
 			<div className="poster-transformSliderPanel">
 				<DesignSliderPanel values={design} onChange={setDesign} />
 				<div className="buttons">
@@ -216,7 +157,6 @@ export default function PosterEditor() {
 					<button onClick={handleSaveClick}>B. OPSLAAN</button>
 				</div>
 			</div>
-
 			{/* === Modal: “Wil je terug?” === */}
 			{showBackConfirm && (
 				<div className="confirm-overlay">
@@ -234,7 +174,6 @@ export default function PosterEditor() {
 					</div>
 				</div>
 			)}
-
 			{/* === Modal: “Wil je afdrukken?” === */}
 			{showSaveConfirm && (
 				<div className="confirm-overlay">
@@ -251,8 +190,7 @@ export default function PosterEditor() {
 					</div>
 				</div>
 			)}
-
-			{/* === Countdown‐modal (na opslaan/print) === */}
+			{/* === Countdown-modal (na opslaan/print) === */}
 			{showCountdown && (
 				<div className="confirm-overlay">
 					<div className="confirm-modal">
