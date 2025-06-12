@@ -1,63 +1,168 @@
-.transformSliderPanel {
-	margin-left: 35.3%;
-	width: 100%;
+/* Reset en body */
+html,
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
-.canvas {
-	margin-left: 20px;
-}
+
+/* 1) Wrapper vult de viewport en gebruikt flex-wrap */
 .Tool1Wrapper {
-	width: 100%;
+	height: 100vh;
 	display: flex;
-	margin-top: 1.5rem;
-}
-.transformSliderPanel button {
-	border: 1px solid #d62323;
+	flex-wrap: wrap;
+	padding: 1.5%;
+	gap: 1.5%;
 	box-sizing: border-box;
-	width: 178.5px;
-	height: 35px;
-	margin-top: 155px;
-	background-color: white;
-	color: #d62323;
-	font-family: "Helvetica", sans-serif;
-	font-weight: 300; /* Light */
 }
-/* in Tool1.css of een apart bestand */
-.confirm-overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background: rgba(0, 0, 0, 0.5);
+
+/* 2) Canvas container */
+.canvas {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	z-index: 1000;
-	/* deze regel is eigenlijk default: */
-	pointer-events: auto;
-	text-align: center;
 }
 
-.confirm-modal {
-	background: white;
-	padding: 2rem;
-	border: 1px solid #d62323;
-	z-index: 1001;
+/* 3) De p5-wrapper met A4-verhouding */
+.canvas-wrapper {
+	aspect-ratio: 210 / 297;
+	box-sizing: border-box;
+	background: #fff;
 }
-.confirm-modal p {
-	color: #d62323;
+.canvas-wrapper canvas {
+	width: 100% !important;
+	height: 100% !important;
+	display: block;
+	box-sizing: border-box;
+	border: 0.05px solid #d62323;
 }
-.confirm-buttons {
-	margin-top: 1rem;
+
+/* 4) Stappenbalk (zoals in PosterEditor) */
+.steps {
 	display: flex;
-	gap: 1rem;
-	justify-content: center;
+	flex-direction: column;
+	gap: 5rem;
+	margin-left: 1rem;
+	font-weight: 300;
+}
+.step {
+	display: flex;
+	align-items: center;
+	font-family: Helvetica, sans-serif;
+	font-size: 1rem;
+	color: #d62323;
+	position: relative;
+}
+.step .box {
+	width: 1rem;
+	height: 1rem;
+	margin-right: 0.75rem;
+	box-sizing: border-box;
+}
+.step.completed .box {
+	background: #d62323;
+}
+/* verticale lijntjes */
+.step:not(:last-child) .box::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 2px;
+	height: 5rem;
+	background: #d62323;
 }
 
-.confirm-buttons button {
-	padding: 0.5rem 1rem;
+/* 5) Slider-panel rechts, zelfde als PosterEditor */
+.transformSliderPanel {
+	flex: 0 1 22.5%;
+	margin-left: auto;
+	min-width: 240px;
+	display: flex;
+	flex-direction: column;
+}
+.transformSliderPanel .buttons {
+	display: flex;
+	gap: 10px;
+	margin-top: 86.2%;
+}
+.transformSliderPanel .buttons button {
 	border: 1px solid #d62323;
-	background: white;
+	flex: 1;
+	height: 35px;
+	background: #fff;
 	color: #d62323;
+	font-family: Helvetica, sans-serif;
+	font-weight: 300;
 	cursor: pointer;
+}
+
+/* 6) Binnenin: de transform-sliders styling (zelfde als DesignSliderPanel) */
+.transform-panel {
+	border: 1px solid #d62323;
+	padding: 12px 17px;
+	background: #fff;
+	font-family: Helvetica, sans-serif;
+	font-weight: 300;
+}
+.transform-panel h3 {
+	margin: 10px 0 24px;
+	color: #2807ff;
+	font-size: 20px;
+	font-weight: 300;
+}
+.slider-row {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 30px;
+}
+.slider-row:last-child {
+	margin-bottom: 20px;
+}
+.slider-row label {
+	margin-bottom: 22px;
+	color: #2807ff;
+	font-size: 14px;
+	margin-left: 10px;
+}
+.slider-row input[type="range"] {
+	-webkit-appearance: none;
+	width: calc(100% - 10px);
+	margin-left: 16px;
+	background: none;
+}
+.slider-row::-webkit-slider-runnable-track {
+	height: 1px;
+	background: #d62323;
+}
+.slider-row::-moz-range-track {
+	height: 1px;
+	background: #d62323;
+}
+.slider-row input[type="range"]::-webkit-slider-thumb,
+.slider-row input[type="range"]::-moz-range-thumb {
+	width: 12px;
+	height: 12px;
+	background: #fff;
+	border: 1px solid #d62323;
+	cursor: pointer;
+	margin-top: -5px;
+}
+.slider-row::before,
+.slider-row::after {
+	position: absolute;
+	top: 60%;
+	transform: translateY(-50%);
+	color: #2807ff;
+	font-size: 14px;
+}
+.slider-row::before {
+	content: "0";
+	left: 12px;
+}
+.slider-row::after {
+	content: "100";
+	right: 0;
 }

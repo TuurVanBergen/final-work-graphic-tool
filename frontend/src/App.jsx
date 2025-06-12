@@ -5,6 +5,7 @@ import Tool2 from "./pages/Tool2";
 import Gallerij from "./pages/Gallerij";
 import PosterEditor from "./pages/PosterEditor";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import GallerijList from "./pages/GallerijList";
 
 export default function App() {
 	return (
@@ -15,6 +16,7 @@ export default function App() {
 				<Route path="/tool1" element={<Tool1 />} />
 				<Route path="/tool2" element={<Tool2 />} />
 				<Route path="/gallerij" element={<Gallerij />} />
+				<Route path="/gallerij/:type" element={<GallerijList />} />
 				<Route path="/poster" element={<PosterEditor />} />
 			</Routes>
 		</Router>

@@ -10,8 +10,8 @@ import { applyHalftone } from "../utils/canvas/effects/applyHalftone";
 
 const SLIDER_KEYS = SLIDER_CONFIG.map((s) => s.id);
 
-const CANVAS_W = 814;
-const CANVAS_H = 1021;
+const CANVAS_W = 636;
+const CANVAS_H = 900;
 
 export default forwardRef(function Canvas(props, ref) {
 	const containerRef = useRef(null);
@@ -147,11 +147,5 @@ export default forwardRef(function Canvas(props, ref) {
 		};
 	}, []);
 
-	return (
-		<div
-			className="canvas-wrapper"
-			style={{ width: CANVAS_W, height: CANVAS_H }}
-			ref={containerRef}
-		></div>
-	);
+	return <div className="canvas-wrapper" ref={containerRef}></div>;
 });

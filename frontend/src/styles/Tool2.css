@@ -86,7 +86,7 @@
 	height: 161px;
 	border: 1px solid #d62323;
 	position: absolute;
-	top: 488px; /* 252 + 233 = 485 */
+	top: 488px;
 	left: 483px;
 }
 
@@ -95,7 +95,7 @@
 	height: 369px;
 	border: 1px solid #d62323;
 	position: absolute;
-	top: 650px; /* 485 + 159 = 644 */
+	top: 650px;
 	left: 320px;
 }
 

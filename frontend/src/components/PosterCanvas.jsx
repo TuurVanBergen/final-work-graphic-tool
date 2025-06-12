@@ -11,12 +11,12 @@ import "../index.css";
 import { applyEffects } from "../utils/canvas/applyEffects";
 import { drawPosterBase } from "../utils/posterCanvas/drawHelpersPoster";
 
-import { SLIDER_CONFIG } from "../config/SLIDER_CONFIG"; // Tool1‐sliders
-import { SLIDER_CONFIG_POSTER } from "../config/SLIDER_CONFIG_POSTER"; // Poster‐sliders
+import { SLIDER_CONFIG } from "../config/SLIDER_CONFIG";
+import { SLIDER_CONFIG_POSTER } from "../config/SLIDER_CONFIG_POSTER";
 
 const TOOL1_KEYS = SLIDER_CONFIG.map((s) => s.id);
-const CANVAS_W = 814;
-const CANVAS_H = 1021;
+const CANVAS_W = 636;
+const CANVAS_H = 900;
 
 export default forwardRef(function PosterCanvas(
 	{ char, originalSliders, design, fontSize },
@@ -140,13 +140,7 @@ export default forwardRef(function PosterCanvas(
 				const outlineW = p.design.outlineWidth;
 
 				// 6) Teken de basis (grid/halftone/contour/fill) WÉL met blend-mode
-				drawPosterBase(
-					p,
-					finalPts,
-					fillColor,
-					outlineW,
-					p.design.blend // 0..10, straks gemapt naar de juiste p5-blendMode
-				);
+				drawPosterBase(p, finalPts, fillColor, outlineW, p.design.blend);
 
 				// 7) Als er géén grid/halftone actief is, teken “gewone” fill of outline:
 				const doGrid = p.gridSize > 10;

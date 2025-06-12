@@ -1,0 +1,106 @@
+/* src/styles/Gallerij.css */
+
+.gallery-container {
+	display: flex;
+	flex-direction: column;
+	height: 91vh;
+	box-sizing: border-box;
+	background: #fff;
+}
+
+.gallery-grid {
+	flex: 1;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* Link wrapper */
+.gallery-item-link {
+	text-decoration: none;
+	color: inherit;
+	display: block;
+	position: relative;
+	border: 1px solid #d62323;
+	box-sizing: border-box;
+	height: 100%;
+}
+
+/* Inner content */
+.gallery-item {
+	position: relative;
+	width: 100%;
+	padding-top: 100%;
+	box-sizing: border-box;
+}
+
+.gallery-item > .gallery-top-group,
+.gallery-item > .gallery-bottom-letter {
+	position: absolute;
+	left: 0;
+	right: 0;
+	box-sizing: border-box;
+}
+
+/* Top group */
+.gallery-top-group {
+	top: 5%;
+	position: absolute;
+	left: 0;
+	right: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	padding: 0 1rem;
+	box-sizing: border-box;
+}
+
+.gallery-top-link {
+	font-family: Helvetica, sans-serif;
+	font-size: 1.25rem;
+	font-weight: 300;
+	color: #2807ff;
+	text-transform: uppercase;
+	margin-bottom: 0.25rem;
+}
+
+.gallery-sub-link {
+	font-family: Helvetica, sans-serif;
+	font-size: 1rem;
+	font-weight: 300;
+	color: #d62323;
+	text-transform: none;
+}
+
+/* 2) Linker‐uitlijning van de grote letter onderaan */
+.gallery-bottom-letter {
+	bottom: 0.5rem;
+	position: absolute;
+	left: 5%;
+	right: auto;
+	font-family: Helvetica, sans-serif;
+	font-size: 14vw;
+	line-height: 1;
+	color: transparent;
+	-webkit-text-stroke: 1px #d62323;
+	text-align: left;
+}
+
+.gallery-container {
+	position: relative;
+}
+
+.gallery-back-btn {
+	position: absolute;
+	bottom: 1.5%;
+	right: 1.5%;
+	background: rgba(255, 255, 255, 0.8);
+	border: 1px solid #d62323;
+	color: #d62323;
+	font-family: Helvetica, sans-serif;
+	font-weight: 300;
+	padding: 0.5rem 1rem;
+	cursor: pointer;
+}

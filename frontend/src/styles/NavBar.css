@@ -1,13 +1,3 @@
-/* NavBar.css */
-
-/* 1. Font-face definitie voor Helvetica vanuit de public-map */
-/* @font-face {
-	font-family: "Helvetica";
-	src: url("/helvetica font/helvetica-light-587ebe5a59211.ttf")
-		format("truetype");
-	font-weight: light;
-} */
-
 /* 2. Pas Helvetica toe op de gehele navbar */
 nav {
 	font-family: "Helvetica", sans-serif;

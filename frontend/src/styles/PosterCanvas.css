@@ -1,11 +1,10 @@
 .canvas-wrapper {
-	width: 541px;
-	height: 675px;
-	margin: 0 auto;
+	position: relative;
+	overflow: hidden;
 }
 
 .canvas-wrapper canvas {
-	border: 0.5px solid #d62323;
+	width: 100% !important;
+	height: 100% !important;
 	display: block;
-	box-sizing: border-box;
 }

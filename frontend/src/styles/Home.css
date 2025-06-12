@@ -1,88 +1,116 @@
 /* src/styles/Home.css */
 
-.home-container {
-	position: relative;
+body,
+html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
 	width: 100%;
-	height: 100vh;
-	overflow: hidden;
-	border-top: 1px solid #d62323;
 }
 
+.home-container {
+	display: flex;
+	flex-direction: column;
+	height: 91vh;
+	box-sizing: border-box;
+
+	background: #fff;
+}
+
+.home-container .navbar {
+	flex: 0 0 7.2vh;
+}
+
+/* 3) Grid-container neemt de rest */
+.grid-container {
+	flex: 1 1 auto;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: 1fr;
+	border: 1px solid #d62323;
+	border-top: none;
+	box-sizing: border-box;
+}
+
+/* 4) Grid-item-link vult elke cel volledig */
+.grid-item-link {
+	text-decoration: none;
+	color: inherit;
+	display: block;
+	width: 100%;
+	padding-bottom: 0;
+
+	position: relative;
+	border-left: 1px solid #d62323;
+	border-right: 1px solid #d62323;
+	box-sizing: border-box;
+}
+
+/* 5) Binnenkant van elk item */
+.grid-item {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+}
+
+/* 6) Titel bovenaan */
+.top-link {
+	margin-top: 12.5%;
+	padding: 0 0.5rem;
+	color: #2807ff;
+	font-family: Helvetica, sans-serif;
+	font-size: 1.25rem;
+	font-weight: 300;
+	text-transform: uppercase;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+/* 7) Groot letter-icoon onderaan */
+.bottom-letter {
+	position: absolute;
+	bottom: 0;
+	left: 5%;
+	transform: none;
+	text-align: left;
+
+	font-family: Helvetica, sans-serif;
+	font-size: 14vw;
+	line-height: 1;
+	color: transparent;
+	-webkit-text-stroke: 1px #d62323;
+}
+
+/* 8) Walker-canvas (indien je die gebruikt) */
 .walker-canvas {
 	position: absolute;
-	top: 20px;
 	left: 50%;
 	transform: translateX(-50%);
 	z-index: 2;
 	pointer-events: none;
 }
-
-.grid-container {
-	position: relative;
-	z-index: 5;
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	border-left: 1px solid #d62323;
-	border-right: 1px solid #d62323;
-	border-bottom: 1px solid #d62323;
-}
-
-.grid-item-link {
-	text-decoration: none;
-	color: inherit;
-	display: block;
-	width: 577px;
-	height: 1006px;
-	border-left: 1px solid #d62323;
-	border-right: 1px solid #d62323;
-}
-
-.grid-item-link:first-child {
-	border-left: none;
-}
-
-.grid-item-link:last-child {
-	border-right: none;
-}
-
-.grid-item {
-	position: relative;
+.top-group {
+	margin-top: 10%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: flex-start;
-	width: 100%;
-	height: 100%;
-	background: #fff;
 }
 
-.top-link {
-	margin-top: 85px;
-	width: 173px;
-	height: 24px;
-	color: #2807ff;
+/* Jouw sub-link styling */
+.sub-link {
+	color: #d62323;
+	text-align: center;
 	font-family: Helvetica, sans-serif;
-	font-size: 22px;
+	font-size: 16px;
 	font-style: normal;
 	font-weight: 300;
 	line-height: normal;
 	text-transform: uppercase;
-	text-align: center;
-}
-
-.bottom-letter {
-	position: absolute;
-	left: 200px;
-	transform: translateX(-50%);
-	bottom: 40px; /* pas dit aan voor gewenste verticale afstand */
-	-webkit-text-stroke-width: 1px;
-	-webkit-text-stroke-color: #d62323;
-	font-family: Helvetica, sans-serif;
-	font-size: 250px;
-	font-style: normal;
-	font-weight: 300;
-	line-height: normal;
-	width: 252px;
-	height: 290px;
-	color: transparent;
+	margin-top: 0.25rem;
 }

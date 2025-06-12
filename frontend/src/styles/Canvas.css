@@ -1,16 +1,19 @@
 .canvas-wrapper {
-	/* width: 541px;
-	height: 675px; */
-	width: 814;
-	height: 1021px;
-
-	/* wrapper heeft nu geen border meer */
-	margin-left: 20px;
+	width: 100% !important;
+	height: 100% !important;
+	margin: 0 !important;
 }
-
-/* Borderranden op de canvas zelf */
 .canvas-wrapper canvas {
+	width: 100%;
+	height: auto;
 	border: 1px solid #d62323;
-	display: block; /* voorkomt inline spacing issues */
+	display: block;
+	box-sizing: border-box;
+}
+.canvas-wrapper {
+	width: 100% !important;
+	height: 100% !important;
+	margin: 0 !important;
+	max-width: 636px;
 	box-sizing: border-box;
 }

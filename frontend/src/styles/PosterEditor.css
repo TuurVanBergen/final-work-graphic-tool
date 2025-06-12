@@ -1,15 +1,37 @@
+html,
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
 .PosterEditorWrapper {
+	height: 100vh;
 	display: flex;
-	padding-left: 15px; /* 15px ruimte tussen linkerkant en canvas */
-	gap: 20px; /* ruimte tussen canvas en panel */
-	margin-top: 1.5rem;
+	flex-wrap: wrap;
+	padding: 1.5%;
+	gap: 1.5%;
+	box-sizing: border-box;
 }
+.poster-canvas {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
+	border: 1px solid #d62323;
+}
 .poster-canvas .canvas-wrapper {
-	width: 541px;
-	height: 675px;
-}
+	aspect-ratio: 210 / 297;
 
+	width: min(calc(100vw - 2rem), calc((100vh - 2rem) * 210 / 297));
+
+	height: auto;
+
+	border: 2px solid #d62323;
+	border-radius: 4px;
+	box-sizing: border-box;
+	padding: 4px;
+	background: #fff;
+}
 .poster-canvas .canvas-wrapper canvas {
 	border: 1px solid #d62323;
 	display: block;
@@ -19,12 +41,14 @@
 .poster-transformSliderPanel .buttons {
 	display: flex;
 	gap: 10px;
-	margin-top: 20px;
+	margin-top: 86.2%;
 }
 
 .poster-transformSliderPanel .buttons button {
 	border: 1px solid #d62323;
-	width: 178.5px;
+	width: 100%;
+	max-width: 200px;
+
 	height: 35px;
 	background-color: white;
 	color: #d62323;
@@ -35,5 +59,57 @@
 
 /* Zorg dat het panel de juiste breedte behoudt */
 .poster-transformSliderPanel {
-	flex: 0 0 340px;
+	flex: 0 1 22.5%;
+	margin-left: auto;
+	min-width: 240px;
+}
+
+.steps {
+	display: flex;
+	flex-direction: column;
+	gap: 5rem;
+	margin-top: 0;
+	font-weight: 300;
+	margin-left: 14px;
+}
+
+.step {
+	display: flex;
+	align-items: center;
+	font-family: Helvetica, sans-serif;
+	font-size: 1rem;
+	color: #d62323;
+	position: relative;
+}
+
+.step .box {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin-right: 0.75rem;
+	border: 2px solid #d62323;
+	box-sizing: border-box;
+}
+
+/* gevuld vierkantje voor voltooid */
+.step.completed .box {
+	background: #d62323;
+}
+
+/* Verticaal lijntje van elk box (behalve de laatste) */
+.step .box:not(:last-of-type):after,
+.step:not(:last-child) .box:after {
+	content: "";
+	position: absolute;
+	top: 90%;
+	left: 3.5%;
+	transform: translateX(-50%);
+	width: 2px;
+	height: calc(5.3rem);
+	background: #d62323;
+}
+
+/* Zorg dat de lijn niet onder de laatste stap komt */
+.step:last-child .box:after {
+	display: none;
 }

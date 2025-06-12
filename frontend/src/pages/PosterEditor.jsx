@@ -54,7 +54,7 @@ export default function PosterEditor() {
 	const [countdown, setCountdown] = useState(5);
 
 	const canvasRef = useRef(null);
-
+	const wrapperRef = useRef(null);
 	// Als er geen data is (char of originalSliders ontbreekt), terug naar Tool1
 	useEffect(() => {
 		if (!char || !originalSliders) {
@@ -98,24 +98,40 @@ export default function PosterEditor() {
 	};
 
 	// === HANDLE SAVE ===
-	const handleSaveClick = () => {
+	const handleSaveClick = async () => {
 		initialDesignRef.current = { ...design };
+		const timestamp = Date.now();
+
+		// 1) pak canvas en DataURL
+		const p5canvas = wrapperRef.current?.querySelector("canvas");
+		if (!p5canvas) {
+			console.error("Canvas niet gevonden voor export.");
+			setShowSaveConfirm(false);
+			return;
+		}
+		const pngDataUrl = p5canvas.toDataURL("image/png");
+		const base64 = pngDataUrl.split(",")[1];
+		const imgName = `letter_${timestamp}.png`;
+
+		// 2) sla PNG op
+		try {
+			const savedPath = await window.electronAPI.saveImage(base64, imgName);
+			console.log("Afbeelding opgeslagen op:", savedPath);
+		} catch (err) {
+			console.error("Opslaan PNG mislukt:", err);
+		}
 		setShowSaveConfirm(true);
 	};
 
-	const handleSaveYes = () => {
+	const handleSaveYes = async () => {
 		initialDesignRef.current = { ...design };
 
-		console.log("renderer: window.electronAPI = ", window.electronAPI);
-
-		if (window.electronAPI && window.electronAPI.printSilent) {
+		// 3) optioneel stille print
+		if (window.electronAPI?.printSilent) {
 			window.electronAPI.printSilent();
-		} else {
-			console.error("electronAPI niet gevonden! Silent print faalt.");
 		}
 
 		setShowSaveConfirm(false);
-
 		setTimeout(() => {
 			setShowCountdown(true);
 			setCountdown(5);
@@ -155,7 +171,6 @@ export default function PosterEditor() {
 	useEffect(() => {
 		if (window.electronAPI && window.electronAPI.onArduinoData) {
 			window.electronAPI.onArduinoData((line) => {
-				// Log de volledige ontvangen string in de console
 				console.log(" Ontvangen van Arduino:", line);
 			});
 		} else {
@@ -165,7 +180,7 @@ export default function PosterEditor() {
 	return (
 		<div className="PosterEditorWrapper">
 			{/* === Links: PosterCanvas === */}
-			<div className="poster-canvas">
+			<div className="poster-canvas" ref={wrapperRef}>
 				<PosterCanvas
 					ref={canvasRef}
 					char={char}
@@ -173,6 +188,21 @@ export default function PosterEditor() {
 					design={design}
 					fontSize={fontSize}
 				/>
+			</div>
+			{/* === Stappenbalk === */}
+			<div className="steps">
+				<div className="step completed">
+					<span className="box" />
+					ONTWERP JE LETTER
+				</div>
+				<div className="step completed">
+					<span className="box" />
+					ONTWERP DE POSTER
+				</div>
+				<div className="step">
+					<span className="box" />
+					OPSLAAN/PRINT
+				</div>
 			</div>
 			{/* === Rechts: sliders en knoppen === */}{" "}
 			<div className="poster-transformSliderPanel">
