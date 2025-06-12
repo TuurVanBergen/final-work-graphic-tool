@@ -4,10 +4,14 @@ contextBridge.exposeInMainWorld("electronAPI", {
 	printSilent: () => ipcRenderer.send("print-silent"),
 	savePdf: (buffer, filename) =>
 		ipcRenderer.invoke("save-pdf", buffer, filename),
-	onArduinoData: (callback) => {
-		ipcRenderer.on("arduino-data", (_, data) => {
-			callback(data);
-		});
+	onArduinoData: (cb) => {
+		// maak één listener aan, en geef een cleanup-functie terug
+		const listener = (_evt, data) => cb(data);
+		ipcRenderer.on("arduino-data", listener);
+		// de returnwaarde wordt in React als 'unsubscribe' gebruikt
+		return () => {
+			ipcRenderer.removeListener("arduino-data", listener);
+		};
 	},
 	saveImage: (base64Png, name) =>
 		ipcRenderer.invoke("save-image", base64Png, name),

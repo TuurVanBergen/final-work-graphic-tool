@@ -10,6 +10,7 @@ export default function SliderPanel({ config, values, onChange }) {
 
 	return (
 		<div className="slider-panel">
+			<h3>PERSONAGE SLIDERS</h3>
 			{config.map(({ id, label, min, max, step }) => (
 				<div className="slider-row" key={id}>
 					<label htmlFor={id}>

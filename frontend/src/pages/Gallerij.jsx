@@ -1,9 +1,17 @@
 // src/pages/Gallerij.jsx
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Gallerij.css";
-
+import useHardwareButtons from "../hooks/useHardwareButtons";
+import { navigateWithCooldown } from "../utils/navigationCooldown";
 export default function Gallerij() {
 	const navigate = useNavigate();
+	useHardwareButtons({
+		onA: () => navigate("/gallerij/letter"),
+		onB: () => navigate("/gallerij/poster"),
+		onC: () => navigateWithCooldown(() => navigate(-1)),
+		enabledOn: ["/gallerij"],
+	});
+
 	return (
 		<div className="gallery-container">
 			<div className="gallery-grid">

@@ -1,5 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Home.css";
+import useHardwareButtons from "../hooks/useHardwareButtons";
+import { navigateWithCooldown } from "../utils/navigationCooldown";
 
 export const ALPHABET = [
 	...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)), // A–Z
@@ -12,8 +14,23 @@ export const ALPHABET = [
 ];
 
 export default function Home() {
-	const location = useLocation();
+	const navigate = useNavigate();
+	const location = useLocation(); // <-- verander deze lijn
+
 	const nextChar = location.state?.char ?? ALPHABET[0];
+	// A = naar Tool1, B = naar Tool2, C = naar Gallerij
+	useHardwareButtons({
+		onA: () =>
+			navigateWithCooldown(() =>
+				navigate("/tool1", { state: { char: nextChar } })
+			),
+		onB: () =>
+			navigateWithCooldown(() =>
+				navigate("/tool2", { state: { char: nextChar } })
+			),
+		onC: () => navigateWithCooldown(() => navigate("/gallerij")),
+		enabledOn: ["/"],
+	});
 	return (
 		<div className="home-container">
 			<div className="grid-container">

@@ -3,7 +3,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PosterCanvas from "../components/PosterCanvas";
 import DesignSliderPanel from "../components/DesignSliderPanel";
 import "../styles/PosterEditor.css";
+import { SLIDER_CONFIG_POSTER } from "../config/SLIDER_CONFIG_POSTER";
+import useHardwareButtons from "../hooks/useHardwareButtons";
 
+import { navigateWithCooldown } from "../utils/navigationCooldown";
 const ALPHABET = [
 	...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
 	...Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i)),
@@ -15,13 +18,15 @@ const ALPHABET = [
 ];
 export default function PosterEditor() {
 	const location = useLocation();
+	const NUM_SLIDERS = SLIDER_CONFIG_POSTER.length;
+
 	const navigate = useNavigate();
 	const { char, sliders: originalSliders, fontSize } = location.state || {};
 
 	const [design, setDesign] = useState({
 		positionX: 0,
 		positionY: 0,
-		scale: 1,
+		posterScale: 1,
 		fillHue: 0,
 		bgHue: 0,
 		verticalOffset: 0,
@@ -54,6 +59,10 @@ export default function PosterEditor() {
 	const [countdown, setCountdown] = useState(5);
 
 	const canvasRef = useRef(null);
+	const lastButtonStatesRef = useRef([1, 1, 1, 1]);
+	const buttonCooldownRef = useRef(false);
+	const latestRawPotsRef = useRef(null);
+	const lastMappedRef = useRef(design);
 	const wrapperRef = useRef(null);
 	// Als er geen data is (char of originalSliders ontbreekt), terug naar Tool1
 	useEffect(() => {
@@ -82,15 +91,13 @@ export default function PosterEditor() {
 		if (isDirty()) {
 			setShowBackConfirm(true);
 		} else {
-			navigate("/tool1", {
-				state: { char, sliders: originalSliders, fontSize },
-			});
+			navigate(-1);
 		}
 	};
 
 	const handleBackYes = () => {
 		setShowBackConfirm(false);
-		navigate("/tool1", { state: { char, sliders: originalSliders, fontSize } });
+		navigate(-1);
 	};
 
 	const handleBackNo = () => {
@@ -141,11 +148,25 @@ export default function PosterEditor() {
 	const handleSaveNo = () => {
 		initialDesignRef.current = { ...design };
 		setShowSaveConfirm(false);
-		alert("Ontwerp is opgeslagen (zonder afdrukken).");
-
 		setShowCountdown(true);
 		setCountdown(5);
 	};
+	const isAnyModalOpen = showBackConfirm || showSaveConfirm;
+
+	useHardwareButtons({
+		onA: () => {
+			if (showBackConfirm) return handleBackYes();
+			if (showSaveConfirm) return handleSaveYes();
+			if (!isAnyModalOpen && isDirty()) return setShowBackConfirm(true);
+			if (!isAnyModalOpen) return handleBack();
+		},
+		onB: () => {
+			if (showBackConfirm) return handleBackNo();
+			if (showSaveConfirm) return handleSaveNo();
+			if (!isAnyModalOpen) return navigateWithCooldown(() => handleSaveClick());
+		},
+		enabledOn: ["/poster"],
+	});
 
 	// === Countdown useEffect ===
 	useEffect(() => {
@@ -169,14 +190,48 @@ export default function PosterEditor() {
 	}, [showCountdown, navigate]);
 	// useEffect voor inkomende Arduino-data
 	useEffect(() => {
-		if (window.electronAPI && window.electronAPI.onArduinoData) {
-			window.electronAPI.onArduinoData((line) => {
-				console.log(" Ontvangen van Arduino:", line);
-			});
-		} else {
-			console.warn("electronAPI.onArduinoData is niet beschikbaar");
-		}
+		if (!window.electronAPI?.onArduinoData) return;
+
+		const unsub = window.electronAPI.onArduinoData((line) => {
+			const parts = line.trim().split(",").map(Number);
+			const pots = parts.slice(4, 4 + NUM_SLIDERS); // enkel potmeters
+
+			latestRawPotsRef.current = pots;
+			// ... rest blijft zoals je al had
+		});
+
+		return () => unsub();
 	}, []);
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			const raw = latestRawPotsRef.current;
+			if (!raw) return;
+
+			let hasChange = false;
+			setDesign((prev) => {
+				const next = { ...prev };
+				SLIDER_CONFIG_POSTER.forEach(({ id, min, max, step }, i) => {
+					const norm = raw[i] / 1023;
+					let mapped = min + norm * (max - min);
+					mapped =
+						step >= 1 ? Math.round(mapped) : Math.round(mapped / step) * step;
+
+					if (Math.abs(mapped - lastMappedRef.current[id]) >= step) {
+						next[id] = mapped;
+						lastMappedRef.current[id] = mapped;
+						hasChange = true;
+					}
+				});
+				return hasChange ? next : prev;
+			});
+
+			if (hasChange) canvasRef.current?.redraw();
+		}, 60);
+
+		return () => clearInterval(interval);
+	}, []);
+
 	return (
 		<div className="PosterEditorWrapper">
 			{/* === Links: PosterCanvas === */}

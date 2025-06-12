@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/GallerijList.css";
+import useHardwareButtons from "../hooks/useHardwareButtons";
 
 export default function GallerijList() {
 	const { type } = useParams();
@@ -33,7 +34,16 @@ export default function GallerijList() {
 			viewportRef.current.scrollBy({ left: scrollBy(), behavior: "smooth" });
 			return next;
 		});
-
+	useHardwareButtons({
+		onA: prev,
+		onB: next,
+		onC: () => navigate(-1),
+		onD: () => {
+			// eventueel iets als "open in detail" of "fullscreen"
+			console.log("Selecteer-knop (D) ingedrukt");
+		},
+		enabledOn: ["/gallerij/letter", "/gallerij/poster"],
+	});
 	return (
 		<div className="gallerij-list">
 			<div className="carousel-container">

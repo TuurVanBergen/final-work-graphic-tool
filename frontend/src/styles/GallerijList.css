@@ -85,15 +85,13 @@
 }
 
 .overlay-prev {
-	top: 50%;
 	left: 1.5%;
-	transform: translateY(-50%);
+	transform: translateY(-1350%);
 }
 
 .overlay-next {
 	top: 50%;
-	right: 1.5%;
-	transform: translateY(-50%);
+	transform: translateY(-1350%);
 }
 
 .overlay-actions {

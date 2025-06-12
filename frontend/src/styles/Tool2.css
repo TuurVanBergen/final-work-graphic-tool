@@ -4,20 +4,20 @@
 	justify-content: flex-start;
 	height: 100vh;
 	margin: 0;
-	padding-top: 42px;
-	padding-left: 88px;
+	padding-top: 1.5%;
+	padding-left: 1.5%;
 }
 
 #frame {
-	width: 722px;
-	height: 1020px;
+	width: 636px;
+	height: 900px;
 	border: 1px solid #d62323;
 	position: relative;
 }
 
 #inner-frame-top {
-	width: 318px;
-	height: 325px;
+	width: 280px;
+	height: 286px;
 	border: 1px solid #d62323;
 	position: absolute;
 	top: 0;
@@ -25,111 +25,112 @@
 }
 
 #inner-frame-small-top {
-	width: 162px;
-	height: 161px;
+	width: 143px;
+	height: 142px;
+	top: 0;
+	left: 282px;
 	border: 1px solid #d62323;
 	position: absolute;
-	top: 0;
-	left: 320px;
 }
 
 #inner-frame-small-bottom {
-	width: 162px;
-	height: 162px;
+	width: 143px;
+	height: 143px;
+	top: 143px;
+	left: 282px;
 	border: 1px solid #d62323;
 	position: absolute;
-	top: 162px;
-	left: 320px;
 }
 
 #inner-frame-small-lower-top {
-	width: 162px;
-	height: 163px;
+	width: 143px;
+	height: 144px;
+	top: 286px;
+	left: 282px;
 	border: 1px solid #d62323;
 	border-top: none;
 	position: absolute;
-	top: 325px;
-	left: 320px;
 }
 
 #inner-frame-small-lower-bottom {
-	width: 162px;
-	height: 162px;
+	width: 143px;
+	height: 143px;
+	top: 429px;
+	left: 282px;
 	border: 1px solid #d62323;
 	position: absolute;
-	top: 487px;
-	left: 320px;
 }
 
 #inner-frame-right-top {
-	height: 246px;
-	width: 238px;
+	width: 210px;
+	height: 217px;
+	top: 0;
+	left: 425px;
 
 	border: 1px solid #d62323;
 	position: absolute;
-	top: 0;
-	left: 483px;
 }
 
 #inner-frame-right-bottom {
-	height: 246px;
-	width: 238px;
+	width: 210px;
+	height: 217px;
+	top: 0;
+	left: 425px;
 
 	border: 1px solid #d62323;
 	position: absolute;
-	top: 0;
-	left: 483px;
 }
 
 #inner-frame-right-lower {
-	width: 238px;
-	height: 161px;
+	width: 210px;
+	height: 142px;
+	top: 430px;
+	left: 425px;
 	border: 1px solid #d62323;
 	position: absolute;
-	top: 488px;
-	left: 483px;
 }
 
 #inner-frame-large-right-bottom {
-	width: 401px;
-	height: 369px;
+	width: 353px;
+	height: 325px;
+	top: 573px;
+	left: 282px;
 	border: 1px solid #d62323;
 	position: absolute;
-	top: 650px;
-	left: 320px;
 }
 
 #inner-frame-middle {
-	width: 318px;
-	height: 376px;
+	width: 280px;
+	height: 331px;
+	top: 286px;
+	left: 0;
 	border: 1px solid #d62323;
 	position: absolute;
-	top: 325px;
-	left: 0;
 }
 
 #inner-frame-bottom {
-	width: 318px;
-	height: 318px;
+	width: 280px;
+	height: 280px;
 	border: 1px solid;
 	position: absolute;
-	top: 701px;
+	top: 618px;
 	left: 0;
 	border: 1px solid #d62323;
 }
 .sidebar {
-	margin-left: 1rem;
+	margin-left: 12.5%;
 }
 
 .button-panel {
+	width: 100%;
 	display: flex;
-	justify-content: space-between;
 	width: 321px;
-	margin-top: 10px;
+	margin-left: 80%;
+	margin-top: 102%;
 }
 
 .button-panel button {
-	padding: 6px 12px;
+	padding: 6px 20px;
 	border: 1px solid #d62323;
 	background: #fff;
 	color: #d62323;

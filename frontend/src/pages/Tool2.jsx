@@ -1,10 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SliderPanel from "../components/Tool2SliderPanel";
 import FrameImage from "../components/FrameImage";
 import { SLIDER_CONFIG_TOOL2 } from "../config/SLIDER_CONFIG_TOOL2";
 import "../styles/Tool2.css";
-
+import useHardwareButtons from "../hooks/useHardwareButtons";
+import { navigateWithCooldown } from "../utils/navigationCooldown";
 const IMAGES = {
 	top: [
 		"/images/000013.jpg",
@@ -53,7 +54,10 @@ export default function Tool2() {
 	const [values, setValues] = useState(initial);
 	const initialRef = useRef(initial);
 	const [showConfirm, setShowConfirm] = useState(false);
-
+	const confirmYes = () => {
+		setShowConfirm(false);
+		navigateWithCooldown(() => navigate(-1));
+	};
 	const save = () => {
 		initialRef.current = { ...values };
 	};
@@ -77,6 +81,58 @@ export default function Tool2() {
 		const valid = isNaN(num) ? 0 : num;
 		return Math.max(0, Math.min(IMAGES[key].length - 1, valid));
 	};
+	const latestRawPotsRef = useRef(null);
+	const lastMappedRef = useRef(values);
+
+	useHardwareButtons({
+		onA: () => {
+			if (showConfirm) return confirmYes();
+			save();
+		},
+		onB: () => {
+			if (showConfirm) return setShowConfirm(false);
+			reset();
+		},
+		onC: () => back(),
+		enabledOn: ["/tool2"],
+	});
+	// Potmeterdata binnenhalen
+	useEffect(() => {
+		if (!window.electronAPI?.onArduinoData) return;
+
+		const unsub = window.electronAPI.onArduinoData((line) => {
+			const parts = line.trim().split(",").map(Number);
+			latestRawPotsRef.current = parts.slice(-SLIDER_CONFIG_TOOL2.length);
+		});
+
+		return () => unsub();
+	}, []);
+	useEffect(() => {
+		const interval = setInterval(() => {
+			const raw = latestRawPotsRef.current;
+			if (!raw) return;
+
+			let hasChange = false;
+			setValues((prev) => {
+				const next = { ...prev };
+				SLIDER_CONFIG_TOOL2.forEach(({ id, min, max, step }, i) => {
+					const norm = raw[i] / 1023;
+					let mapped = min + norm * (max - min);
+					mapped =
+						step >= 1 ? Math.round(mapped) : Math.round(mapped / step) * step;
+
+					if (Math.abs(mapped - lastMappedRef.current[id]) >= step) {
+						next[id] = mapped;
+						lastMappedRef.current[id] = mapped;
+						hasChange = true;
+					}
+				});
+				return hasChange ? next : prev;
+			});
+		}, 60);
+
+		return () => clearInterval(interval);
+	}, []);
 
 	return (
 		<div
@@ -111,6 +167,9 @@ export default function Tool2() {
 						alt="SmallLowerTop"
 					/>
 				</div>
+			</div>
+			<div className="task">
+				<h2>DIT IS EEN OPDRACHT</h2>
 			</div>
 			<div className="sidebar">
 				<SliderPanel
