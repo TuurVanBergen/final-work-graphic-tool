@@ -1,3 +1,9 @@
+/**
+ * FrameImage component
+ *
+ * Deze component toont een afbeelding
+ * De afbeelding wordt weergegeven via een <img>-element met de opgegeven src en alt attributen.
+ */
 import React from "react";
 import "../styles/Tool2.css";
 

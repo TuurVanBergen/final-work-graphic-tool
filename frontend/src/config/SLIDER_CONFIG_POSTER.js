@@ -1,3 +1,14 @@
+/**
+ * Configuratie voor poster-sliders in de PosterEditor
+ *
+ * Elke slider heeft:
+ * - id: unieke key die overeenkomt met state-property
+ * - label: tekst om naast de slider weer te geven
+ * - min: minimale waarde
+ * - max: maximale waarde
+ * - step: stapgrootte bij verplaatsing
+ */
+// src/config/SLIDER_CONFIG_POSTER.js
 export const SLIDER_CONFIG_POSTER = [
 	{
 		id: "posterScale",

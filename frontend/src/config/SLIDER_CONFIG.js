@@ -1,3 +1,15 @@
+/**
+ * Configuratie voor transform-sliders in Tool1 en Canvas
+ *
+ * Elke slider bevat:
+ * - id: unieke key die overeenkomt met state-property
+ * - label: tekst om naast de slider weer te geven
+ * - min: minimale waarde
+ * - max: maximale waarde
+ * - step: stapgrootte bij verplaatsing
+ * - default: beginwaarde bij initialisatie
+ */
+// src/config/SLIDER_CONFIG.js
 export const SLIDER_CONFIG = [
 	{
 		id: "scaleX",

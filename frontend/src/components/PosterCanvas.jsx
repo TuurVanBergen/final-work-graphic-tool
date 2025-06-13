@@ -1,3 +1,11 @@
+/**
+ * PosterCanvas component
+ *
+ * Dit component maakt een p5.js-canvas waarin een letter wordt getekend
+ * met effecten (stretch, slant, grid, halftone) en poster-specifieke
+ * ontwerpinstellingen (achtergrondkleur, positie, rotatie, schaal, blend-mode).
+ * Gebruik forwardRef om extern redraw() aan te roepen.
+ */
 import React, {
 	useEffect,
 	useRef,
@@ -14,7 +22,9 @@ import { drawPosterBase } from "../utils/posterCanvas/drawHelpersPoster";
 import { SLIDER_CONFIG } from "../config/SLIDER_CONFIG";
 import { SLIDER_CONFIG_POSTER } from "../config/SLIDER_CONFIG_POSTER";
 
+// Lijst van tool1 slider-keys voor synchronisatie
 const TOOL1_KEYS = SLIDER_CONFIG.map((s) => s.id);
+// Vaste canvas-dimensies
 const CANVAS_W = 636;
 const CANVAS_H = 900;
 
@@ -22,35 +32,43 @@ export default forwardRef(function PosterCanvas(
 	{ char, originalSliders, design, fontSize },
 	ref
 ) {
-	const containerRef = useRef(null);
-	const p5Instance = useRef(null);
+	const containerRef = useRef(null); // Ref naar wrapper div
+	const p5Instance = useRef(null); // Ref naar p5-instance
 
+	// Expsoe redraw-methode via ref
 	useImperativeHandle(ref, () => ({
 		redraw: () => p5Instance.current?.redraw(),
 	}));
 
-	// Sync props met p5‐instance
+	// Synchroniseer props (char, sliders, design) met p5 en trigger redraw
 	useEffect(() => {
 		const p = p5Instance.current;
 		if (!p) return;
-		p.char = char;
-		p.fontSize = fontSize;
+		p.char = char; // Letter om te tekenen
+		p.fontSize = fontSize; // Lettergrootte
 		TOOL1_KEYS.forEach((key) => (p[key] = originalSliders[key]));
-		p.design = design;
-		p.redraw();
+		p.design = design; // Poster-specifieke instellingen
+		p.redraw(); // Hertekenen met nieuwe waarden
 	}, [char, fontSize, originalSliders, design]);
 
+	// Initialiseer p5-canvas bij eerste render
 	useEffect(() => {
+		// Verwijder oude canvas-elementen
+
 		if (containerRef.current) {
 			containerRef.current
 				.querySelectorAll("canvas")
 				.forEach((c) => c.remove());
 		}
+		// Verwijder oude p5-instance
+
 		p5Instance.current?.remove();
 
+		// Maak nieuwe p5-instance
 		const instance = new p5((p) => {
 			let font;
 
+			// Kleurenpaletten voor achtergrond en fill
 			const bgPalette = [
 				"#ffffff",
 				"#ffcccc",
@@ -76,36 +94,39 @@ export default forwardRef(function PosterCanvas(
 				"#FF851B",
 			];
 
+			// Initialiseer p5-attributen
 			p.char = char;
 			p.fontSize = fontSize;
 			p.design = design;
 			TOOL1_KEYS.forEach((key) => (p[key] = originalSliders[key]));
+			// Lettertype is nog niet geladen
 			p.fontLoaded = false;
 
+			// Setup-fase: canvas maken en lettertype laden
 			p.setup = () => {
 				p.createCanvas(CANVAS_W, CANVAS_H);
-				p.noLoop();
+				p.noLoop(); // Alleen redraw bij expliciet aanroepen
 				p.loadFont("/fonts/Roboto_Mono/static/RobotoMono-Regular.ttf", (f) => {
 					font = f;
 					p.textFont(font);
 					p.textSize(fontSize);
 					p.fontLoaded = true;
-					p.redraw();
+					p.redraw(); // Eerste redraw na font-load
 				});
 			};
 
+			// Draw-fase: teken alles op de canvas
 			p.draw = () => {
-				if (!p.fontLoaded) return;
+				if (!p.fontLoaded) return; // Wacht op font
 
-				// 1) Achtergrond
+				// 1) Achtergrondkleur kiezen op basis van bgHue
 				const bgIdx = Math.min(
 					Math.max(Math.floor(p.design.bgHue), 0),
 					bgPalette.length - 1
 				);
 				p.background(bgPalette[bgIdx]);
 
-				// === START EEN ENKELE PUSH/POP-SPAN ===
-				p.push();
+				p.push(); // Start isolatie scope voor transformaties
 
 				// 2) Externe transformaties: posX/posY + slider‐offsets
 				const totalX =

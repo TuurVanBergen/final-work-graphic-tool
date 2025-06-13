@@ -1,16 +1,32 @@
+/**
+ * Electron main-process
+ *
+ * Verantwoordelijk voor het opstarten van de BrowserWindow,
+ * initialiseren van de seriële poort voor Arduino-communicatie,
+ * afhandelen van IPC-requests voor print, PDF, afbeeldingen en gallerij-bestanden,
+ */
+// src/electron-main.js
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 
 import { initSerialPort } from "./serial-handler.js";
 import fs from "fs/promises";
+
+// Bepaal __dirname in ES-module context
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const galleryDir = path.join(app.getPath("userData"), "gallerij");
-let mainWindow;
-let serialPortHandle;
 
+// Directory voor opgeslagen gallerij-bestanden
+const galleryDir = path.join(app.getPath("userData"), "gallerij");
+let mainWindow; // Ref naar het hoofdvenster
+let serialPortHandle; // Referentie naar de geopende SerialPort
+
+/**
+ * Maak het hoofdvenster en initialiseer functionaliteit
+ */
 function createWindow() {
+	// 1) Maak BrowserWindow aan
 	mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
@@ -23,7 +39,7 @@ function createWindow() {
 			contextIsolation: true,
 		},
 	});
-
+	// 2) Laad frontend: ontwikkel of productie
 	if (process.env.NODE_ENV === "development") {
 		mainWindow.loadURL("http://localhost:5173");
 	} else {
@@ -31,7 +47,7 @@ function createWindow() {
 		mainWindow.loadFile(indexHtml);
 	}
 
-	// Open de seriële poort
+	// 3) Open seriële poort voor Arduino
 	try {
 		serialPortHandle = initSerialPort(
 			mainWindow,
@@ -43,7 +59,7 @@ function createWindow() {
 		console.error("Kon SerialPort niet openen:", err);
 	}
 
-	// Print‐silent
+	// 4) IPC-handler voor silent print
 	ipcMain.on("print-silent", () => {
 		console.log(" print-silent IPC ontvangen in main");
 		mainWindow.webContents.print(
@@ -53,7 +69,7 @@ function createWindow() {
 			}
 		);
 	});
-
+	// 5) Opruiming bij sluiten van het venster
 	mainWindow.on("closed", () => {
 		// Sluit seriële poort  af
 		if (serialPortHandle && typeof serialPortHandle.close === "function") {
@@ -63,8 +79,10 @@ function createWindow() {
 		app.quit();
 	});
 }
-
+// 6) Wanneer Electron klaar is, maak het venster
 app.whenReady().then(createWindow);
+
+// 7) IPC voor opslaan van PDF-bestanden
 ipcMain.handle("save-pdf", async (_, buffer, filename) => {
 	// Maak map aan als die nog niet bestaat
 	const dir = path.join(app.getPath("userData"), "gallerij");
@@ -75,6 +93,7 @@ ipcMain.handle("save-pdf", async (_, buffer, filename) => {
 	await fs.writeFile(filePath, Buffer.from(buffer));
 	return filePath;
 });
+// 8) IPC voor opslaan van PNG-afbeelding
 ipcMain.handle("save-image", async (_, base64, name) => {
 	await fs.mkdir(galleryDir, { recursive: true });
 	const buffer = Buffer.from(base64, "base64");
@@ -82,6 +101,7 @@ ipcMain.handle("save-image", async (_, base64, name) => {
 	await fs.writeFile(filePath, buffer);
 	return filePath;
 });
+
 ipcMain.handle("list-gallery-images", async () => {
 	try {
 		await fs.mkdir(galleryDir, { recursive: true });
@@ -95,6 +115,8 @@ ipcMain.handle("list-gallery-images", async () => {
 		return [];
 	}
 });
+// 9) IPC voor oplijsten van gallery-bestanden op basis van type
+
 ipcMain.handle("list-gallery-files", async (evt, type) => {
 	const dir = path.join(app.getPath("userData"), "gallerij");
 	await fs.mkdir(dir, { recursive: true });
@@ -104,10 +126,11 @@ ipcMain.handle("list-gallery-files", async (evt, type) => {
 		.filter((f) => f.startsWith(prefix))
 		.map((f) => path.join(dir, f));
 });
-
+// 10) IPC voor openen van geselecteerd bestand in OS
 ipcMain.handle("open-gallery-file", async (evt, filePath) => {
 	return shell.openPath(filePath);
 });
+// 11) Quitting op niet-macOS platform
 app.on("window-all-closed", () => {
 	if (process.platform !== "darwin") {
 		app.quit();

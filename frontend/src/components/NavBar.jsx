@@ -1,14 +1,15 @@
 import { Link, useLocation } from "react-router-dom";
 import "../styles/NavBar.css";
 /**
- * NavBar
+ * NavBar component
  *
- * Een eenvoudige navigatiebalk voor de applicatie.
- * Toon huidige route en links naar Home, Tool1 en Tool2.
+ * Navigatiebalk voor de applicatie.
+ * Verbergt zichzelf op bepaalde routes (Tool1, Tool2, Poster).
+ * Toont anders een link naar de homepagina.
  */
 export default function NavBar() {
-	const { pathname } = useLocation();
-	// Verberg navbar op Tool2 route
+	const { pathname } = useLocation(); // Haal de huidige route op
+	// Verberg de navbar op specifieke routes
 	if (pathname == "/tool2") {
 		return null;
 	}
@@ -18,7 +19,7 @@ export default function NavBar() {
 	if (pathname == "/poster") {
 		return null;
 	}
-
+	// Definieer navigatielinks
 	const links = [{ to: "/", label: "Home" }];
 
 	return (

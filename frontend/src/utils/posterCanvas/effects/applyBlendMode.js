@@ -5,7 +5,7 @@
  * @param {number} blendValue waarde van slider (0..10, step 1)
  */
 export function applyBlendMode(p, blendValue) {
-	// Lijst met p5 blendMode-constants in de gewenste volgorde
+	// Lijst met p5 blendMode-constants
 	const modes = [
 		p.BLEND,
 		p.ADD,

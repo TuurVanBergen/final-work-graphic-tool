@@ -1,3 +1,10 @@
+/**
+ * PosterEditor pagina
+ *
+ * Hier kan de gebruiker een poster-ontwerp aanpassen, opslaan en (stille) print-acties uitvoeren.
+ * Ondersteunt navigatie via Electron, hardware-knoppen en modals voor bevestiging en countdown.
+ */
+// src/pages/PosterEditor.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PosterCanvas from "../components/PosterCanvas";
@@ -5,8 +12,9 @@ import DesignSliderPanel from "../components/DesignSliderPanel";
 import "../styles/PosterEditor.css";
 import { SLIDER_CONFIG_POSTER } from "../config/SLIDER_CONFIG_POSTER";
 import useHardwareButtons from "../hooks/useHardwareButtons";
-
 import { navigateWithCooldown } from "../utils/navigationCooldown";
+
+// Alfabet en cijfers voor automatische volgende karakter-selectie na countdown
 const ALPHABET = [
 	...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
 	...Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i)),
@@ -17,12 +25,14 @@ const ALPHABET = [
 	"!",
 ];
 export default function PosterEditor() {
-	const location = useLocation();
+	const location = useLocation(); // Huidige locatie met state (char, sliders, fontSize)
 	const NUM_SLIDERS = SLIDER_CONFIG_POSTER.length;
-
 	const navigate = useNavigate();
+
+	// Haal char en originele sliderwaarden uit location.state, anders navigeer terug
 	const { char, sliders: originalSliders, fontSize } = location.state || {};
 
+	// State voor poster-ontwerpwaarden
 	const [design, setDesign] = useState({
 		positionX: 0,
 		positionY: 0,
@@ -36,7 +46,7 @@ export default function PosterEditor() {
 		outlineWidth: 0,
 	});
 
-	//ontwerpwaarden onthouden
+	// Ref om initiële ontwerpwaarden te onthouden (voor dirty-check)
 	const initialDesignRef = useRef({
 		positionX: 0,
 		positionY: 0,
@@ -50,20 +60,20 @@ export default function PosterEditor() {
 		outlineWidth: 0,
 	});
 
-	// Modal‐states
+	// Modal-states: terug-bevestiging, opslaan-bevestiging, countdown
 	const [showBackConfirm, setShowBackConfirm] = useState(false);
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 	const [showCountdown, setShowCountdown] = useState(false);
-
-	// Countdown‐teller
 	const [countdown, setCountdown] = useState(5);
 
+	// Refs voor p5-canvas en hardware/potmeter data
 	const canvasRef = useRef(null);
 	const lastButtonStatesRef = useRef([1, 1, 1, 1]);
 	const buttonCooldownRef = useRef(false);
 	const latestRawPotsRef = useRef(null);
 	const lastMappedRef = useRef(design);
 	const wrapperRef = useRef(null);
+
 	// Als er geen data is (char of originalSliders ontbreekt), terug naar Tool1
 	useEffect(() => {
 		if (!char || !originalSliders) {
@@ -71,7 +81,7 @@ export default function PosterEditor() {
 		}
 	}, [char, originalSliders, navigate]);
 
-	// Check of er wijzigingen zijn t.o.v. last saved design
+	// Functie om te controleren of ontwerp gewijzigd is t.o.v. initiële waarden
 	const isDirty = () => {
 		const init = initialDesignRef.current;
 		return (
@@ -86,7 +96,7 @@ export default function PosterEditor() {
 		);
 	};
 
-	// === HANDLE BACK ===
+	// Terug-knop handler: toon confirm als dirty, anders navigeer terug
 	const handleBack = () => {
 		if (isDirty()) {
 			setShowBackConfirm(true);
@@ -104,12 +114,11 @@ export default function PosterEditor() {
 		setShowBackConfirm(false);
 	};
 
-	// === HANDLE SAVE ===
+	// Opslaan: zet initiële waarden, exporteer canvas naar PNG en sla op via Electron
 	const handleSaveClick = async () => {
 		initialDesignRef.current = { ...design };
 		const timestamp = Date.now();
 
-		// 1) pak canvas en DataURL
 		const p5canvas = wrapperRef.current?.querySelector("canvas");
 		if (!p5canvas) {
 			console.error("Canvas niet gevonden voor export.");
@@ -153,6 +162,7 @@ export default function PosterEditor() {
 	};
 	const isAnyModalOpen = showBackConfirm || showSaveConfirm;
 
+	// Hardware-knoppen A (back/confirm), B (save/confirm)
 	useHardwareButtons({
 		onA: () => {
 			if (showBackConfirm) return handleBackYes();
@@ -168,7 +178,7 @@ export default function PosterEditor() {
 		enabledOn: ["/poster"],
 	});
 
-	// === Countdown useEffect ===
+	// Countdown-effect: na opslaan/print, tel af en navigeer naar home met volgend char
 	useEffect(() => {
 		if (!showCountdown) return;
 
@@ -188,7 +198,8 @@ export default function PosterEditor() {
 
 		return () => clearInterval(intervalId);
 	}, [showCountdown, navigate]);
-	// useEffect voor inkomende Arduino-data
+
+	// Arduino-potmeter data hook: update design waardes en herteken canvas
 	useEffect(() => {
 		if (!window.electronAPI?.onArduinoData) return;
 
@@ -231,6 +242,7 @@ export default function PosterEditor() {
 
 		return () => clearInterval(interval);
 	}, []);
+	// Render UI: canvas, stappenbalk, sliders, modals
 
 	return (
 		<div className="PosterEditorWrapper">

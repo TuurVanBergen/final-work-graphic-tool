@@ -1,20 +1,30 @@
 // src/pages/Gallerij.jsx
+/**
+ * Gallerij pagina
+ *
+ * Toont een raster met links naar de subpagina's voor letters en posters.
+ * Ondersteunt navigatie via fysieke hardware-knoppen (A, B, C) met cooldown.
+ */
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Gallerij.css";
 import useHardwareButtons from "../hooks/useHardwareButtons";
 import { navigateWithCooldown } from "../utils/navigationCooldown";
 export default function Gallerij() {
+	// Hook om te navigeren
 	const navigate = useNavigate();
+
+	// Registreer hardware-knoppen: A => letter-gallerij, B => poster-gallerij, C => terug
 	useHardwareButtons({
 		onA: () => navigate("/gallerij/letter"),
 		onB: () => navigate("/gallerij/poster"),
 		onC: () => navigateWithCooldown(() => navigate(-1)),
-		enabledOn: ["/gallerij"],
+		enabledOn: ["/gallerij"], // Alleen actief op de basis gallerij-route
 	});
 
 	return (
 		<div className="gallery-container">
 			<div className="gallery-grid">
+				{/* Link naar LetterAtelier-gallerij */}
 				<Link to="/gallerij/letter" className="gallery-item-link">
 					<div className="gallery-item">
 						<div className="gallery-top-group">
@@ -27,6 +37,7 @@ export default function Gallerij() {
 					</div>
 				</Link>
 
+				{/* Link naar KarakterAtelier-postergallerij */}
 				<Link to="/gallerij/poster" className="gallery-item-link">
 					<div className="gallery-item">
 						<div className="gallery-top-group">
@@ -40,10 +51,10 @@ export default function Gallerij() {
 				</Link>
 			</div>
 
-			{/* C. Terug-knop als overlay */}
+			{/* Overlay-knop C voor terug-navigatie */}
 			<button
 				className="overlay-btn gallery-back-btn"
-				onClick={() => navigate(-1)}
+				onClick={() => navigate(-1)} // Ga één stap terug in de geschiedenis
 			>
 				C. Terug
 			</button>

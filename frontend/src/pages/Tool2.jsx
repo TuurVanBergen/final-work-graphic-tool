@@ -1,3 +1,12 @@
+/**
+ * Tool2 pagina
+ *
+ * Toont een kader met meerdere afbeeldingen en een slider-paneel om
+ * via potentiometer- of muis-input de selectie te wijzigen.
+ * Ondersteunt opslag/reset van sliderwaarden en terug-navigatie
+ * met bevestiging via hardware-knoppen.
+ */
+// src/pages/Tool2.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SliderPanel from "../components/Tool2SliderPanel";
@@ -6,6 +15,8 @@ import { SLIDER_CONFIG_TOOL2 } from "../config/SLIDER_CONFIG_TOOL2";
 import "../styles/Tool2.css";
 import useHardwareButtons from "../hooks/useHardwareButtons";
 import { navigateWithCooldown } from "../utils/navigationCooldown";
+
+// Predefined afbeeldingen per framepositie
 const IMAGES = {
 	top: [
 		"/images/000013.jpg",
@@ -47,28 +58,34 @@ const IMAGES = {
 
 export default function Tool2() {
 	const navigate = useNavigate();
+
+	// Initialiseer sliderwaarden op de minimumwaarden uit config
 	const initial = SLIDER_CONFIG_TOOL2.reduce(
 		(acc, { id, min }) => ({ ...acc, [id]: min }),
 		{}
 	);
-	const [values, setValues] = useState(initial);
-	const initialRef = useRef(initial);
-	const [showConfirm, setShowConfirm] = useState(false);
+	const [values, setValues] = useState(initial); // State voor huidige sliderwaarden
+	const initialRef = useRef(initial); // Ref om initiële waarden te bewaren voor dirty-check
+	const [showConfirm, setShowConfirm] = useState(false); // State voor bevestigingsmodal
+
+	// Handlers voor bevestiging
 	const confirmYes = () => {
 		setShowConfirm(false);
-		navigateWithCooldown(() => navigate(-1));
+		navigateWithCooldown(() => navigate(-1)); // Navigeer terug met cooldown
 	};
 	const save = () => {
-		initialRef.current = { ...values };
+		initialRef.current = { ...values }; // Sla actuele waarden op als nieuwe initiële waarden
 	};
-	const reset = () => setValues(initial);
+	const reset = () => setValues(initial); // Reset sliders naar initiële waarden
 	const isDirty = () =>
+		// Controleer of waarden gewijzigd zijn
 		Object.keys(initialRef.current).some(
 			(k) => initialRef.current[k] !== values[k]
 		);
 	const back = () => (isDirty() ? setShowConfirm(true) : navigate(-1));
 
 	const getIdx = (key) => {
+		// Bepaal index per framekey op basis van sliderwaarde
 		const idxMap = {
 			top: 1,
 			middle: 2,
@@ -81,9 +98,11 @@ export default function Tool2() {
 		const valid = isNaN(num) ? 0 : num;
 		return Math.max(0, Math.min(IMAGES[key].length - 1, valid));
 	};
+	// Refs voor potentiometer-data
 	const latestRawPotsRef = useRef(null);
 	const lastMappedRef = useRef(values);
 
+	// Configureer hardware-knoppen A=save, B=reset, C=back
 	useHardwareButtons({
 		onA: () => {
 			if (showConfirm) return confirmYes();
@@ -96,7 +115,7 @@ export default function Tool2() {
 		onC: () => back(),
 		enabledOn: ["/tool2"],
 	});
-	// Potmeterdata binnenhalen
+	// Luister naar Arduino-data via preload API
 	useEffect(() => {
 		if (!window.electronAPI?.onArduinoData) return;
 
@@ -107,6 +126,7 @@ export default function Tool2() {
 
 		return () => unsub();
 	}, []);
+	// Vertaal ruwe potmeterwaarden naar sliderwaarden en update state
 	useEffect(() => {
 		const interval = setInterval(() => {
 			const raw = latestRawPotsRef.current;
@@ -116,10 +136,12 @@ export default function Tool2() {
 			setValues((prev) => {
 				const next = { ...prev };
 				SLIDER_CONFIG_TOOL2.forEach(({ id, min, max, step }, i) => {
+					// normaliseer (0-1023 naar min-max), ronde af op step,
 					const norm = raw[i] / 1023;
 					let mapped = min + norm * (max - min);
 					mapped =
 						step >= 1 ? Math.round(mapped) : Math.round(mapped / step) * step;
+					// update alleen als verandering groot geneog zijn
 
 					if (Math.abs(mapped - lastMappedRef.current[id]) >= step) {
 						next[id] = mapped;
@@ -139,6 +161,7 @@ export default function Tool2() {
 			id="tool-layout"
 			style={{ pointerEvents: showConfirm ? "none" : "auto" }}
 		>
+			{/* Frame met verschillende afbeeldingen */}
 			<div id="frame">
 				<div id="inner-frame-top">
 					<FrameImage src={IMAGES.top[getIdx("top")]} alt="Top" />
@@ -168,9 +191,11 @@ export default function Tool2() {
 					/>
 				</div>
 			</div>
+			{/* Opdrachttekst of taakbeschrijving */}
 			<div className="task">
 				<h2>DIT IS EEN OPDRACHT</h2>
 			</div>
+			{/* Sidebar met sliders en knoppen */}
 			<div className="sidebar">
 				<SliderPanel
 					config={SLIDER_CONFIG_TOOL2}
@@ -183,6 +208,7 @@ export default function Tool2() {
 					<button onClick={back}>Terug</button>
 				</div>
 			</div>
+			{/* Confirmatie-overlay bij back zonder opslaan */}
 			{showConfirm && (
 				<div className="confirm-overlay">
 					<div className="confirm-modal">
