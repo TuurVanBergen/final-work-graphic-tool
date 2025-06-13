@@ -1,131 +1,65 @@
-#tool-layout {
-	display: flex;
-	align-items: flex-start;
-	justify-content: flex-start;
-	height: 100vh;
-	margin: 0;
-	padding-top: 1.5%;
-	padding-left: 1.5%;
-}
-
 #frame {
+	display: grid;
 	width: 636px;
 	height: 900px;
 	border: 1px solid #d62323;
-	position: relative;
+	box-sizing: border-box;
+
+	grid-template-columns: 280px 143px 213px;
+
+	grid-template-rows: 300px 300px 300px;
+	gap: 0;
 }
 
 #inner-frame-top {
-	width: 280px;
-	height: 286px;
-	border: 1px solid #d62323;
-	position: absolute;
-	top: 0;
-	left: 0;
+	grid-column: 1 / 2;
+	grid-row: 1 / 2;
 }
-
 #inner-frame-small-top {
-	width: 143px;
-	height: 142px;
-	top: 0;
-	left: 282px;
-	border: 1px solid #d62323;
-	position: absolute;
+	grid-column: 2 / 3;
+	grid-row: 1 / 2;
 }
-
-#inner-frame-small-bottom {
-	width: 143px;
-	height: 143px;
-	top: 143px;
-	left: 282px;
-	border: 1px solid #d62323;
-	position: absolute;
-}
-
-#inner-frame-small-lower-top {
-	width: 143px;
-	height: 144px;
-	top: 286px;
-	left: 282px;
-	border: 1px solid #d62323;
-	border-top: none;
-	position: absolute;
-}
-
-#inner-frame-small-lower-bottom {
-	width: 143px;
-	height: 143px;
-	top: 429px;
-	left: 282px;
-	border: 1px solid #d62323;
-	position: absolute;
-}
-
 #inner-frame-right-top {
-	width: 210px;
-	height: 217px;
-	top: 0;
-	left: 425px;
-
-	border: 1px solid #d62323;
-	position: absolute;
-}
-
-#inner-frame-right-bottom {
-	width: 210px;
-	height: 217px;
-	top: 0;
-	left: 425px;
-
-	border: 1px solid #d62323;
-	position: absolute;
-}
-
-#inner-frame-right-lower {
-	width: 210px;
-	height: 142px;
-	top: 430px;
-	left: 425px;
-	border: 1px solid #d62323;
-	position: absolute;
-}
-
-#inner-frame-large-right-bottom {
-	width: 353px;
-	height: 325px;
-	top: 573px;
-	left: 282px;
-	border: 1px solid #d62323;
-	position: absolute;
+	grid-column: 3 / 4;
+	grid-row: 1 / 2;
 }
 
 #inner-frame-middle {
-	width: 280px;
-	height: 331px;
-	top: 286px;
-	left: 0;
-	border: 1px solid #d62323;
-	position: absolute;
+	grid-column: 1 / 2;
+	grid-row: 2 / 3;
+}
+#inner-frame-small-bottom {
+	grid-column: 2 / 3;
+	grid-row: 2 / 3;
+}
+#inner-frame-right-bottom {
+	grid-column: 3 / 4;
+	grid-row: 2 / 3;
 }
 
 #inner-frame-bottom {
-	width: 280px;
-	height: 280px;
-	border: 1px solid;
-	position: absolute;
-	top: 618px;
-	left: 0;
-	border: 1px solid #d62323;
+	grid-column: 1 / 2;
+	grid-row: 3 / 4;
 }
-.sidebar {
-	margin-left: 12.5%;
+#inner-frame-small-lower-top {
+	grid-column: 2 / 3;
+	grid-row: 3 / 4;
+}
+#inner-frame-right-lower {
+	grid-column: 3 / 4;
+	grid-row: 3 / 4;
+}
+
+/* Indien je nog een large-vak in de onderste rij wilt dat 2 kolommen overspant: */
+#inner-frame-large-right-bottom {
+	grid-column: 2 / 4;
+	grid-row: 3 / 4;
 }
 
 .button-panel {
 	width: 100%;
 	display: flex;
 	width: 321px;
-	margin-left: 80%;
 	margin-top: 102%;
 }
 
@@ -143,20 +77,12 @@
 	background: #d62323;
 	color: #fff;
 }
-#inner-frame-top {
-	overflow: hidden;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 318px;
-	height: 325px;
-	border: 1px solid #d62323;
-}
 
 .frame-image {
 	width: 100%;
 	height: 100%;
-	object-fit: cover;
+	object-fit: contain;
+	object-position: center;
 }
 
 /* Buttons en modal styling */
@@ -212,4 +138,50 @@
 .confirm-buttons button:hover {
 	background: #d62323;
 	color: #fff;
+}
+#tool-layout {
+	display: flex;
+	flex-wrap: nowrap;
+	padding: 1.5%;
+	box-sizing: border-box;
+	height: 100vh;
+	margin: 0;
+	overflow-x: auto;
+}
+/* 1) Canvas (het frame) */
+.canvas {
+	flex: 0 1 636px;
+	height: 900px;
+	position: relative;
+}
+
+/* 2) Task-tekst blok */
+.task {
+	margin-left: 20px;
+	flex: 0 0 400px;
+	align-self: flex-start;
+}
+
+/* 3) Sidebar met sliders en knoppen */
+.sidebar {
+	flex: 0 0 321px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+/* 4) Stijl voor de <h2> binnen .task */
+.task h2 {
+	margin: 0 0 1rem;
+	line-height: 1.4;
+	color: #d62323;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: 300;
+}
+
+/* 5) Button-panel op de onderkant van de sidebar */
+.button-panel {
+	display: flex;
+	gap: 0.5rem;
+	margin-top: auto;
 }

@@ -1,8 +1,7 @@
 .slider-panel {
 	border: 1px solid #d62323;
 	padding: 12px 17px;
-	margin-left: 1rem;
-	width: 321px;
+	width: 100%;
 	background: #fff;
 	font-family: "Helvetica", sans-serif;
 	font-weight: 300;

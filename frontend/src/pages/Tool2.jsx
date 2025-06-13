@@ -15,50 +15,64 @@ import { SLIDER_CONFIG_TOOL2 } from "../config/SLIDER_CONFIG_TOOL2";
 import "../styles/Tool2.css";
 import useHardwareButtons from "../hooks/useHardwareButtons";
 import { navigateWithCooldown } from "../utils/navigationCooldown";
-
+import html2canvas from "html2canvas";
+const TASKS = [
+	"BEDENK EEN KLEURRIJKE STRAATARTIEST DIE ZIJN PUBLIEK BETOVERT MET MUZIEK.",
+	"ONTWERP EEN GEVAARLIJKE PIRAAT DIE DE WOELIGE BAREN TROTSEERT.",
+	"ONTWERP EEN PERSONAGE VOOR EEN KINDERBOEK DAT VROLIJKHEID UITSTRAALT.",
+	"ONTWERP EEN VROLIJKE MARKTKRAMER OP EEN ZONNIGE LENTEDAG, DIE VOORBIJGAANDERS MET ZIJN GLIMLACH BETOVERT.",
+	"ONTWERP EEN PERSONAGE DAT OP CARNAVAL VERKLEED IS ALS HAAR FAVORIETE DIER.",
+	"ONTWERP EEN MASCOTTE VOOR EEN VERKEERSVEILIGHEIDSCAMPAGNE.",
+	"ONTWERP EEN KARAKTER VAN HOE JIJ JE OVER 20 JAAR ZIET.",
+	"ONTWERP EEN AVONTUURLIJKE ARCHEOLOOG OP ZOEK NAAR VERGETEN SCHATTEN",
+];
 // Predefined afbeeldingen per framepositie
 const IMAGES = {
 	top: [
-		"/images/000013.jpg",
-		"/images/000014.jpg",
-		"/images/000017.jpg",
-		"/images/000018.jpg",
+		"/images/Hoofd1.svg",
+		"/images/Hoofd2.svg",
+		"/images/Hoofd3.svg",
+		"/images/Hoofd4.svg",
 	],
 	middle: [
-		"/images/000013.jpg",
-		"/images/000014.jpg",
-		"/images/000017.jpg",
-		"/images/000018.jpg",
+		"/images/Torso1.svg",
+		"/images/Torso2.svg",
+		"/images/Torso3.svg",
+		"/images/Torso4.svg",
 	],
 	bottom: [
-		"/images/000013.jpg",
-		"/images/000014.jpg",
-		"/images/000017.jpg",
-		"/images/000018.jpg",
+		"/images/Benen1.svg",
+		"/images/Benen2.svg",
+		"/images/Benen3.svg",
+		"/images/Benen4.svg",
 	],
 	smallTop: [
-		"/images/000013.jpg",
-		"/images/000014.jpg",
-		"/images/000017.jpg",
-		"/images/000018.jpg",
+		"/images/Neus1.svg",
+		"/images/Neus2.svg",
+		"/images/Neus3.svg",
+		"/images/Neus4.svg",
 	],
 	smallBottom: [
-		"/images/000013.jpg",
-		"/images/000014.jpg",
-		"/images/000017.jpg",
-		"/images/000018.jpg",
+		"/images/Mond1.svg",
+		"/images/Mond2.svg",
+		"/images/Mond3.svg",
+		"/images/Mond4.svg",
 	],
 	smallLowerTop: [
-		"/images/000013.jpg",
-		"/images/000014.jpg",
-		"/images/000017.jpg",
-		"/images/000018.jpg",
+		"/images/Armen1.svg",
+		"/images/Armen2.svg",
+		"/images/Armen3.svg",
+		"/images/Armen4.svg",
 	],
 };
 
 export default function Tool2() {
 	const navigate = useNavigate();
-
+	// Kies bij eerste render een willekeurige opdracht
+	const [currentTask] = useState(() => {
+		const i = Math.floor(Math.random() * TASKS.length);
+		return TASKS[i];
+	});
 	// Initialiseer sliderwaarden op de minimumwaarden uit config
 	const initial = SLIDER_CONFIG_TOOL2.reduce(
 		(acc, { id, min }) => ({ ...acc, [id]: min }),
@@ -67,7 +81,12 @@ export default function Tool2() {
 	const [values, setValues] = useState(initial); // State voor huidige sliderwaarden
 	const initialRef = useRef(initial); // Ref om initiële waarden te bewaren voor dirty-check
 	const [showConfirm, setShowConfirm] = useState(false); // State voor bevestigingsmodal
-
+	// === Save/print flow state
+	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+	const [showCountdown, setShowCountdown] = useState(false);
+	const [countdown, setCountdown] = useState(5);
+	// Ref om het frame te capturen
+	const wrapperRef = useRef(null);
 	// Handlers voor bevestiging
 	const confirmYes = () => {
 		setShowConfirm(false);
@@ -101,18 +120,54 @@ export default function Tool2() {
 	// Refs voor potentiometer-data
 	const latestRawPotsRef = useRef(null);
 	const lastMappedRef = useRef(values);
-
+	// ==== SAVE HANDLERS (PNG + silent print) ====
+	const handleSaveClick = async () => {
+		if (!wrapperRef.current) return;
+		const canvas = await html2canvas(wrapperRef.current);
+		const dataUrl = canvas.toDataURL("image/png");
+		const base64 = dataUrl.split(",")[1];
+		const imgName = `tool2_${Date.now()}.png`;
+		try {
+			await window.electronAPI.saveImage(base64, imgName);
+		} catch (err) {
+			console.error("Opslaan PNG mislukt:", err);
+		}
+		setShowSaveConfirm(true);
+	};
+	const handleSaveYes = () => {
+		if (window.electronAPI?.printSilent) {
+			window.electronAPI.printSilent();
+		}
+		setShowSaveConfirm(false);
+		setShowCountdown(true);
+		setCountdown(5);
+	};
+	const handleSaveNo = () => {
+		setShowSaveConfirm(false);
+		setShowCountdown(true);
+		setCountdown(5);
+	};
+	// ==== COUNTDOWN EFFECT ====
+	useEffect(() => {
+		if (!showCountdown) return;
+		const id = setInterval(() => {
+			setCountdown((c) => {
+				if (c <= 1) {
+					clearInterval(id);
+					return 0;
+				}
+				return c - 1;
+			});
+		}, 1000);
+		return () => clearInterval(id);
+	}, [showCountdown]);
 	// Configureer hardware-knoppen A=save, B=reset, C=back
 	useHardwareButtons({
 		onA: () => {
 			if (showConfirm) return confirmYes();
 			save();
 		},
-		onB: () => {
-			if (showConfirm) return setShowConfirm(false);
-			reset();
-		},
-		onC: () => back(),
+		onB: () => back(),
 		enabledOn: ["/tool2"],
 	});
 	// Luister naar Arduino-data via preload API
@@ -157,12 +212,9 @@ export default function Tool2() {
 	}, []);
 
 	return (
-		<div
-			id="tool-layout"
-			style={{ pointerEvents: showConfirm ? "none" : "auto" }}
-		>
+		<div id="tool-layout">
 			{/* Frame met verschillende afbeeldingen */}
-			<div id="frame">
+			<div id="frame" ref={wrapperRef}>
 				<div id="inner-frame-top">
 					<FrameImage src={IMAGES.top[getIdx("top")]} alt="Top" />
 				</div>
@@ -193,7 +245,7 @@ export default function Tool2() {
 			</div>
 			{/* Opdrachttekst of taakbeschrijving */}
 			<div className="task">
-				<h2>DIT IS EEN OPDRACHT</h2>
+				<h2>{currentTask}</h2>
 			</div>
 			{/* Sidebar met sliders en knoppen */}
 			<div className="sidebar">
@@ -203,9 +255,8 @@ export default function Tool2() {
 					onChange={setValues}
 				/>
 				<div className="button-panel">
-					<button onClick={save}>Opslaan</button>
-					<button onClick={reset}>Reset</button>
-					<button onClick={back}>Terug</button>
+					<button onClick={back}>B. TERUG</button>
+					<button onClick={save}>A. OPSLAAN</button>
 				</div>
 			</div>
 			{/* Confirmatie-overlay bij back zonder opslaan */}
@@ -228,6 +279,33 @@ export default function Tool2() {
 							</button>
 							<button onClick={() => setShowConfirm(false)}>B. NEE</button>
 						</div>
+					</div>
+				</div>
+			)}
+			{/* === Save-confirm modal === */}
+			{showSaveConfirm && (
+				<div className="confirm-overlay">
+					<div className="confirm-modal">
+						<p>
+							Wil je je ontwerp afdrukken?
+							<br />
+							(Het is al opgeslagen.)
+						</p>
+						<div className="confirm-buttons">
+							<button onClick={handleSaveYes}>A. JA</button>
+							<button onClick={handleSaveNo}>B. NEE</button>
+						</div>
+					</div>
+				</div>
+			)}
+			{/* === Countdown-modal === */}
+			{showCountdown && (
+				<div className="confirm-overlay">
+					<div className="confirm-modal">
+						<p>Je ontwerp komt eraan — kijk naar de printer.</p>
+						<p style={{ fontSize: "1.5rem", marginTop: "1rem" }}>
+							Terug in: {countdown}
+						</p>
 					</div>
 				</div>
 			)}
