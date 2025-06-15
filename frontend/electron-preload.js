@@ -6,7 +6,6 @@
  * Hierdoor kan de frontend veilig functies aanroepen zoals printSilent,
  * savePdf, saveImage, en luisteren naar Arduino-data.
  */
-// src/preload.js
 const { contextBridge, ipcRenderer } = require("electron");
 
 // Expose API's in de renderer via window.electronAPI

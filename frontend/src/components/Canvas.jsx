@@ -80,7 +80,7 @@ export default forwardRef(function Canvas(props, ref) {
 			p.setup = () => {
 				p.createCanvas(CANVAS_W, CANVAS_H); // Canvas aanmaken
 				p.noLoop(); // Zet automatische loop uit
-				p.loadFont("/fonts/Roboto_Mono/static/RobotoMono-Regular.ttf", (f) => {
+				p.loadFont("fonts/Roboto_Mono/static/RobotoMono-Regular.ttf", (f) => {
 					// Laad het lettertype asynchroon
 					font = f;
 					p.textFont(font);

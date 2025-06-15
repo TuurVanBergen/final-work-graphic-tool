@@ -106,7 +106,7 @@ export default forwardRef(function PosterCanvas(
 			p.setup = () => {
 				p.createCanvas(CANVAS_W, CANVAS_H);
 				p.noLoop(); // Alleen redraw bij expliciet aanroepen
-				p.loadFont("/fonts/Roboto_Mono/static/RobotoMono-Regular.ttf", (f) => {
+				p.loadFont("fonts/Roboto_Mono/static/RobotoMono-Regular.ttf", (f) => {
 					font = f;
 					p.textFont(font);
 					p.textSize(fontSize);

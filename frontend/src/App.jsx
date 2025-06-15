@@ -6,13 +6,14 @@
  * • Routes: Home, Tool1, Tool2, Gallerij, GallerijList, PosterEditor
  */
 // src/App.jsx
+
 import NavBar from "./components/NavBar";
 import Home from "./pages/Home";
 import Tool1 from "./pages/Tool1";
 import Tool2 from "./pages/Tool2";
 import Gallerij from "./pages/Gallerij";
 import PosterEditor from "./pages/PosterEditor";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import GallerijList from "./pages/GallerijList";
 
 export default function App() {

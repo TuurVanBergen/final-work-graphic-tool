@@ -3,7 +3,7 @@
  *
  * Toont een kader met meerdere afbeeldingen en een slider-paneel om
  * via potentiometer- of muis-input de selectie te wijzigen.
- * Ondersteunt opslag/reset van sliderwaarden en terug-navigatie
+ * Ondersteunt opslag van sliderwaarden en terug-navigatie
  * met bevestiging via hardware-knoppen.
  */
 // src/pages/Tool2.jsx
@@ -16,6 +16,7 @@ import "../styles/Tool2.css";
 import useHardwareButtons from "../hooks/useHardwareButtons";
 import { navigateWithCooldown } from "../utils/navigationCooldown";
 import html2canvas from "html2canvas";
+
 const TASKS = [
 	"BEDENK EEN KLEURRIJKE STRAATARTIEST DIE ZIJN PUBLIEK BETOVERT MET MUZIEK.",
 	"ONTWERP EEN GEVAARLIJKE PIRAAT DIE DE WOELIGE BAREN TROTSEERT.",
@@ -29,40 +30,40 @@ const TASKS = [
 // Predefined afbeeldingen per framepositie
 const IMAGES = {
 	top: [
-		"/images/Hoofd1.svg",
-		"/images/Hoofd2.svg",
-		"/images/Hoofd3.svg",
-		"/images/Hoofd4.svg",
+		"images/Hoofd1.png",
+		"images/Hoofd2.svg",
+		"images/Hoofd3.svg",
+		"images/Hoofd4.svg",
 	],
 	middle: [
-		"/images/Torso1.svg",
-		"/images/Torso2.svg",
-		"/images/Torso3.svg",
-		"/images/Torso4.svg",
+		"images/Torso1.png",
+		"images/Torso2.svg",
+		"images/Torso3.svg",
+		"images/Torso4.svg",
 	],
 	bottom: [
-		"/images/Benen1.svg",
-		"/images/Benen2.svg",
-		"/images/Benen3.svg",
-		"/images/Benen4.svg",
+		"images/Benen1.png",
+		"images/Benen2.svg",
+		"images/Benen3.svg",
+		"images/Benen4.svg",
 	],
 	smallTop: [
-		"/images/Neus1.svg",
-		"/images/Neus2.svg",
-		"/images/Neus3.svg",
-		"/images/Neus4.svg",
+		"images/Neus1.svg",
+		"ages/Neus2.svg",
+		"images/Neus3.svg",
+		"images/Neus4.svg",
 	],
 	smallBottom: [
-		"/images/Mond1.svg",
-		"/images/Mond2.svg",
-		"/images/Mond3.svg",
-		"/images/Mond4.svg",
+		"images/Mond1.svg",
+		"images/Mond2.svg",
+		"images/Mond3.svg",
+		"images/Mond4.svg",
 	],
 	smallLowerTop: [
-		"/images/Armen1.svg",
-		"/images/Armen2.svg",
-		"/images/Armen3.svg",
-		"/images/Armen4.svg",
+		"images/Armen1.svg",
+		"images/Armen2.svg",
+		"images/Armen3.svg",
+		"images/Armen4.svg",
 	],
 };
 
@@ -92,10 +93,6 @@ export default function Tool2() {
 		setShowConfirm(false);
 		navigateWithCooldown(() => navigate(-1)); // Navigeer terug met cooldown
 	};
-	const save = () => {
-		initialRef.current = { ...values }; // Sla actuele waarden op als nieuwe initiële waarden
-	};
-	const reset = () => setValues(initial); // Reset sliders naar initiële waarden
 	const isDirty = () =>
 		// Controleer of waarden gewijzigd zijn
 		Object.keys(initialRef.current).some(
@@ -123,21 +120,21 @@ export default function Tool2() {
 	// ==== SAVE HANDLERS (PNG + silent print) ====
 	const handleSaveClick = async () => {
 		if (!wrapperRef.current) return;
-		const canvas = await html2canvas(wrapperRef.current);
-		const dataUrl = canvas.toDataURL("image/png");
-		const base64 = dataUrl.split(",")[1];
-		const imgName = `tool2_${Date.now()}.png`;
 		try {
+			const canvas = await html2canvas(wrapperRef.current, {});
+			const dataUrl = canvas.toDataURL("image/png");
+			const base64 = dataUrl.split(",")[1];
+			const imgName = `poster_${Date.now()}.png`;
 			await window.electronAPI.saveImage(base64, imgName);
+			// markeer als opgeslagen
+			initialRef.current = { ...values };
+			setShowSaveConfirm(true);
 		} catch (err) {
-			console.error("Opslaan PNG mislukt:", err);
+			console.error("Save failed:", err);
 		}
-		setShowSaveConfirm(true);
 	};
 	const handleSaveYes = () => {
-		if (window.electronAPI?.printSilent) {
-			window.electronAPI.printSilent();
-		}
+		if (window.electronAPI?.printSilent) window.electronAPI.printSilent();
 		setShowSaveConfirm(false);
 		setShowCountdown(true);
 		setCountdown(5);
@@ -161,14 +158,21 @@ export default function Tool2() {
 		}, 1000);
 		return () => clearInterval(id);
 	}, [showCountdown]);
-	// Configureer hardware-knoppen A=save, B=reset, C=back
+
+	useEffect(() => {
+		if (showCountdown && countdown === 0) {
+			setShowCountdown(false);
+			navigateWithCooldown(() => navigate("/"));
+		}
+	}, [showCountdown, countdown, navigate]);
+	// Configureer hardware-knoppen A=save, C=back
 	useHardwareButtons({
-		onA: () => {
-			if (showConfirm) return confirmYes();
-			save();
+		onA: () => navigateWithCooldown(() => navigate("/")),
+		onB: () => {
+			if (showSaveConfirm) return handleSaveNo();
+			return navigateWithCooldown(() => handleSaveClick());
 		},
-		onB: () => back(),
-		enabledOn: ["/tool2"],
+		enabledOn: ["/tool2"], // Alleen actief op deze route
 	});
 	// Luister naar Arduino-data via preload API
 	useEffect(() => {
@@ -216,33 +220,40 @@ export default function Tool2() {
 			{/* Frame met verschillende afbeeldingen */}
 			<div id="frame" ref={wrapperRef}>
 				<div id="inner-frame-top">
-					<FrameImage src={IMAGES.top[getIdx("top")]} alt="Top" />
+					<FrameImage src={IMAGES.top[getIdx("top")]} alt="Hoofd" />
 				</div>
-				<div id="inner-frame-middle">
-					<FrameImage src={IMAGES.middle[getIdx("middle")]} alt="Middle" />
-				</div>
-				<div id="inner-frame-bottom">
-					<FrameImage src={IMAGES.bottom[getIdx("bottom")]} alt="Bottom" />
-				</div>
+
 				<div id="inner-frame-small-top">
-					<FrameImage
-						src={IMAGES.smallTop[getIdx("smallTop")]}
-						alt="SmallTop"
-					/>
+					<FrameImage src={IMAGES.smallTop[getIdx("smallTop")]} alt="Neus" />
 				</div>
 				<div id="inner-frame-small-bottom">
 					<FrameImage
 						src={IMAGES.smallBottom[getIdx("smallBottom")]}
-						alt="SmallBottom"
+						alt="Mond"
 					/>
 				</div>
+
+				<div id="inner-frame-middle">
+					<FrameImage src={IMAGES.middle[getIdx("middle")]} alt="Torso" />
+				</div>
+
 				<div id="inner-frame-small-lower-top">
 					<FrameImage
 						src={IMAGES.smallLowerTop[getIdx("smallLowerTop")]}
-						alt="SmallLowerTop"
+						alt="Armen"
+					/>
+				</div>
+				<div id="inner-frame-bottom">
+					<FrameImage src={IMAGES.bottom[getIdx("bottom")]} alt="Benen" />
+				</div>
+				<div id="inner-frame-right-lower">
+					<FrameImage
+						src={IMAGES.smallLowerTop[getIdx("smallLowerTop")]}
+						alt="Armen"
 					/>
 				</div>
 			</div>
+
 			{/* Opdrachttekst of taakbeschrijving */}
 			<div className="task">
 				<h2>{currentTask}</h2>
@@ -255,8 +266,8 @@ export default function Tool2() {
 					onChange={setValues}
 				/>
 				<div className="button-panel">
-					<button onClick={back}>B. TERUG</button>
-					<button onClick={save}>A. OPSLAAN</button>
+					<button onClick={back}>A. TERUG</button>
+					<button onClick={handleSaveClick}>B. OPSLAAN</button>
 				</div>
 			</div>
 			{/* Confirmatie-overlay bij back zonder opslaan */}
@@ -302,7 +313,7 @@ export default function Tool2() {
 			{showCountdown && (
 				<div className="confirm-overlay">
 					<div className="confirm-modal">
-						<p>Je ontwerp komt eraan — kijk naar de printer.</p>
+						<p>Je ontwerp komt eraan</p>
 						<p style={{ fontSize: "1.5rem", marginTop: "1rem" }}>
 							Terug in: {countdown}
 						</p>

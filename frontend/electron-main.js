@@ -43,7 +43,7 @@ function createWindow() {
 	if (process.env.NODE_ENV === "development") {
 		mainWindow.loadURL("http://localhost:5173");
 	} else {
-		const indexHtml = path.join(__dirname, "dist", "index.html");
+		const indexHtml = path.join(__dirname, "dist", "../dist/index.html");
 		mainWindow.loadFile(indexHtml);
 	}
 
@@ -51,7 +51,7 @@ function createWindow() {
 	try {
 		serialPortHandle = initSerialPort(
 			mainWindow,
-			"/dev/cu.usbmodem11101",
+			"/dev/cu.usbmodem11201",
 			9600
 		);
 		console.log("SerialPort geopend op /dev/cu.usbmodem11101 @9600");
